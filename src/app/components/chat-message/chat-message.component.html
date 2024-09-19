@@ -1,0 +1,62 @@
+<div class="box_All box_All_Message" *ngIf="this.closedMessage">
+
+   <!--- <div class="box_Title">
+        
+        <img src="https://cdn-icons-png.flaticon.com/512/456/456212.png" alt="">
+                
+        <h1>{{this.chatInformation.username}}</h1>
+   
+    </div>
+ 
+    <div class="backButton" (click)="changeState()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>
+    </div>
+--->   
+
+    <div class="message_Box">
+
+        <div class="messageChat_Item" *ngFor="let chat of this.clearMessage; let i = index" [attr.data-chat]="chat.userSend">
+
+            <div class="message_Information">
+              
+                <img src="https://cdn-icons-png.flaticon.com/512/456/456212.png" alt="">
+
+                <h1 class="userSend">{{this.usernames[i]}}</h1>
+
+            </div>
+
+            <div class="messageChat">
+
+                <svg class="topMessage" width="50" height="17" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0.5 0L0.560124 0.213168C0.851475 1.24614 1.30722 2.22547 1.90986 3.11358L2.77848 4.39366C3.08613 4.84703 3.43053 5.27436 3.80818 5.67133L6.01852 7.99467L8.7963 10.4973L9.96304 11.2857C11.6165 12.403 13.5663 13 15.5618 13H25H1.38889L0.5 0Z" fill="#F3EBEB"/>
+                </svg>
+
+               <svg class="topSendMessage" width="50" height="17" viewBox="0 0 25 13" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M24.5 0L24.4399 0.213168C24.1485 1.24614 23.6928 2.22547 23.0901 3.11358L22.2215 4.39366C21.9139 4.84704 21.5695 5.27436 21.1918 5.67133L18.9815 7.99467L16.2037 10.4973L15.037 11.2857C13.3835 12.403 11.4337 13 9.43815 13H0H23.6111L24.5 0Z" fill="#F3EBEB"/>
+                </svg>
+                    
+                    
+    
+                <h1>{{chat.messageChat}}</h1> 
+
+            </div>
+            
+        </div>
+     
+       
+    </div>
+
+    <form class="send_Message" (ngSubmit)="sendMessage()" style="justify-content: center; display: flex; width: 100%;">
+
+        <input type="text" [(ngModel)]="message" name="textMessage" style="width: 500px" autocomplete="off">
+
+        <button type="submit"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3.09923 19.215L5.99938 12.805C6.20895 12.2888 6.20895 11.7112 5.99938 11.195L3.09923 4.78511C2.67923 3.71511 3.66926 2.62507 4.62926 3.12507L19.9293 10.1251C20.2559 10.3099 20.5274 10.578 20.7164 10.9022C20.9054 11.2263 21.005 11.5948 21.005 11.97C21.005 12.3453 20.9054 12.7138 20.7164 13.0379C20.5274 13.3621 20.2559 13.6302 19.9293 13.815L4.62926 20.815C3.66926 21.365 2.67923 20.285 3.09923 19.215Z" stroke="#44475C" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M12.4384 11.9961H6.14844" stroke="#44475C" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+        </button>
+        
+    </form>
+    
+        
+
+</div>

@@ -1,0 +1,72 @@
+<div class="box">
+
+    <div class="box_All">
+        <app-group-message class="groupMessage" *ngIf="this.chatState"></app-group-message>
+       <!--- <app-chat-message class="chatMessage"></app-chat-message> --->
+    </div>
+
+
+</div>
+
+
+
+<!--
+
+<div class="box_all">
+    <div class="stars"></div>
+
+    <app-group-message></app-group-message>
+    <div class="chat_box" style="display: none;">
+        <button class="back_Button" (click)="backButton()">VOLTAR</button>
+       
+        <div class="bar_search">
+
+            <input type="text" name="search_User" (input)="userSearch($event)" [(ngModel)]="textSearch" autocomplete="off">
+      
+            <i style="display: flex; width: 20px; height: 20px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg></i>
+            
+            <div class="items_Search">
+                
+            </div>
+
+        </div>
+     
+        <div class="all_Message" style="display: none; margin-top: 20px; flex-direction: column; background-color: red;">
+            
+            <div class="box_Message" *ngFor="let group of this.groupMessage; let i = index" (click)="clickChat(group.userSend, group.userGet)">
+
+                <img class="image_User" src="https://i.pinimg.com/236x/03/ac/c0/03acc030c6700dfd274d1ef20e70609b.jpg" alt="">
+                
+                <h1>{{userMessage[i].userUsername}}</h1>
+           
+            </div>
+            
+        </div>
+
+        <div class="messageEmpty" *ngIf="allMessage.length == 0 && this.stateAddChat == 0">
+
+            <h1>adicione uma nova conversa</h1>
+
+        </div>
+
+        <app-voice-call></app-voice-call>
+        <div class="message_Chat" style="display: none;">
+          
+        </div>
+        
+        <form (ngSubmit)="sendMessage()" class="send_Message" style="display: none; position: absolute; bottom: 100px;">
+
+            <input type="text" [(ngModel)]="chatEntity.messageChat" name="textMessage" style="width: 500px">
+
+            <button type="submit">SEND</button>
+            
+        </form>
+        
+      
+
+    </div>
+    
+</div>
+-->
+<button (click)="logout()" style="display: flex; border: none; border-radius: 10px; background-color: #50176D; height: min-content; position: absolute; bottom: 0; right: 0;">LOGOUT</button>
+

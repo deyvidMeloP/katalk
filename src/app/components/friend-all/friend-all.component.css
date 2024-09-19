@@ -1,0 +1,83 @@
+
+.buttonList, .buttonAdd{
+    padding: 12px;
+    border: none;
+    background-color: #F3EBEB;
+    border-radius: 12px;
+    transition: all 0.4s ease;
+   
+}
+
+
+svg{
+    padding: 5px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    color: #F3EBEB;
+}
+.buttonAdd{
+    background-color: #459cb6;
+}
+
+.buttonList:hover{
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 15px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px;
+}
+
+.friend_Box{
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    min-height: 100vh;
+    background-color: #F3EBEB;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+    z-index: 5;
+}
+
+.searchBar{
+    transform: translateY(-100px);
+    transition: all 0.4s ease;
+}
+
+.search_Friend{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.friend_Item{
+    background-color: #459cb6;
+    width: 40%;
+    min-width: 250px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    border-radius: 15px;
+    gap: 10px;
+}
+
+.friend_Item img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.friend_Item h1{
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.addFriend{
+    text-align: center;
+    margin-left: 50px;
+    padding: 5px;
+    color: black;
+    background-color: #F3EBEB;
+    border-radius: 15px;
+    cursor: pointer;
+}

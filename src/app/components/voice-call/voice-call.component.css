@@ -1,0 +1,12 @@
+.call_Message, .video_Message{
+    border: none;
+    display: flex;
+    width: 40px;
+    height: 40px;
+  }
+
+  video {
+    width: 300px; /* Ajuste conforme necessário */
+    height: auto;
+    border: 2px solid #000;
+  }

@@ -1,0 +1,180 @@
+.box{
+    display: flex;
+    width: 100vw;
+    padding: 20px 30px 0px 30px;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.box_Message{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+.box_Title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu_Button{
+    border: solid 1px #F3EBEB;
+    cursor: pointer;
+}
+
+.box_Title h1{
+    font-size: 36px;
+    font-weight: 500;
+    color: #ffff;
+}
+
+.box_Title img{
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    background-color: aliceblue;
+}
+
+.groupMessage{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 340px;
+    width: 24%;
+    max-height: 620px;
+    height: 520px;
+    height: 86vh;
+    overflow-y: auto;
+    padding-right: 20px;
+    position: relative;
+    scroll-behavior: smooth;
+    background-image: url("https://i.redd.it/g4crddfnmt9a1.jpg");
+    background-image: url("https://i.pinimg.com/736x/e1/3f/29/e13f29bfa1e81af68d79fab35fbe7d99.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.groupMessage:hover::-webkit-scrollbar-thumb{
+    background-color: rgb(27, 24, 24);
+    visibility: visible;
+}
+
+.groupMessage::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .groupMessage::-webkit-scrollbar-thumb{
+    visibility: hidden;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+.groupMessage::-webkit-scrollbar-track {
+    background-color: rgb(33, 32, 32);
+    display: none;
+  }
+
+.group_Item{
+    display: flex;
+    border: solid 1px #F3EBEB;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    min-height: 70px!important;
+    padding-right: 10px;
+    cursor: pointer;
+}
+
+.group_Item img{
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background-color: whitesmoke;
+    margin-left: 10px;
+}
+
+.informationGroup h1{
+    text-align: end;
+    font-size: 16px;
+    font-weight: 500;
+    color: #F3EBEB;
+}
+
+.information_Message{
+    width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+}
+
+.background{
+    background-image: url("https://wallpapers.com/images/hd/dark-samurai-ozptbd1ntlz67j3r.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 10px;
+    width: 78%;
+}
+
+.emptyGroup{
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.menuCircle{
+    position: relative;
+    width: 42px;
+    height: 42px;
+}
+
+.menuCircle span{
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 0;
+    top: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.3s all ease;
+}
+
+.menu_Close{
+    position: absolute;
+    top: 0;
+    visibility: hidden;
+    opacity: 0;
+    font-weight: 400;
+    transition: 0.3s all ease;
+    cursor: pointer;
+}
+
+.translateIcon{
+    opacity: 1!important;
+    z-index: 4!important;
+}
+
+/*.friendAll{
+    display: none;
+}
+*/
+
+.addnewGroup{
+    position: absolute;
+    top: 70px;
+    z-index: 3;
+    width: 10vw;
+    min-height: 12vh;
+    background-color: #F3EBEB;
+    align-self: center;
+}

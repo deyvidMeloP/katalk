@@ -1,0 +1,122 @@
+
+<div class="box">
+
+    <div class="box_All">
+
+        <div class="box_Register" *ngIf="this.clickRegister == 0">
+
+            <h1 class="box_Title">Register your account</h1>
+
+            <div class="register_Information">
+           
+                <label style="font-size: 18px;" for="email">Email</label>
+                <input type="text" name="email" [(ngModel)] = "email" autocomplete="off">
+
+                <label style="font-size: 18px;" for="password">Password</label>
+                <input type="text" name="password" [(ngModel)] = "password" autocomplete="off">
+
+                <label style="font-size: 18px;" for="passwordConfirm">Confirm your password</label>
+                <input type="text" name="passwordConfirm" [(ngModel)] = "passwordConfirm" autocomplete="off">
+
+            </div>
+
+            <button class="button_Register" (click)="register()">Register</button>
+           
+            <div class="registerWith">
+
+                <h1>Register With Google</h1>
+                
+                <svg style="cursor: pointer;" width="32" height="30" viewBox="0 0 30 27" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      
+                    <rect width="30" height="27" rx="13.5" fill="url(#pattern0_514_1163)"/>
+                    <defs>
+                    <pattern id="pattern0_514_1163" patternContentUnits="objectBoundingBox" width="1" height="1">
+                    <use xlink:href="#image0_514_1163" transform="matrix(0.00444444 0 0 0.00493827 0 -0.0555556)"/>
+                    </pattern>
+                    <image id="image0_514_1163" width="225" height="225" xlink:href="data:image/png;base64,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"/>
+                    </defs>
+      
+                </svg>
+            
+            </div>
+
+            <a class="buttonRegister" href="/login">
+                <span></span> <span></span>
+                <span></span> <span></span>
+                Or Login
+            </a>
+        
+        </div>
+
+        <div class="box_Image" *ngIf="this.clickRegister == 1">
+
+            <h1 class="image_Title">Insert your Image</h1>
+
+            <div class="image_All">
+
+                <input class="image_File" (change)="insertedImage($event)" type="file" accept="image/*" />
+           
+            </div>
+
+            <div class="userName">
+
+                <label style="font-size: 18px;" for="userName">Username</label>
+                <input type="text" name="userName" [(ngModel)] = "userName" autocomplete="off">
+
+            </div>
+
+            <button class="button_Register" (click)="register()">Next</button>
+
+        </div>
+
+    </div>
+
+</div>
+    
+
+
+
+
+<!--- <div class="container-fluid">
+    <div class="row mt-5">
+        <div class="col"></div>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+
+                        <div class="mb-3">
+                            <h4 class="text-dark text-muted">Register</h4>
+                        </div>
+                        <div class="mb-3">
+                          <label for="exampleInputEmail1" class="form-label">Email</label>
+                          <input type="email" class="form-control" name="email" [(ngModel)] = "email">
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">UserName</label>
+                            <input type="text" class="form-control" name="userName" [(ngModel)] = "userName">
+  
+                          </div>
+
+                        <div class="mb-3">
+                          <label for="exampleInputPassword1" class="form-label">Password</label>
+                          <input type="password" class="form-control" name="password" [(ngModel)] = "password">
+                        </div>
+                       
+                        <button type="button" class="btn btn-info" (click)="register()">Register</button>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a href="/login" style="text-decoration: none;">Have an account ? <span class="text-danger">Register</span></a>
+                            </div>
+                       
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <div class="col"></div>
+</div>--->
