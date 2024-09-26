@@ -279,6 +279,14 @@ getGroupAllMessage():Observable<any[]>{
  )
 }
 
+getByUser(uid: string):Observable<any>{
+  const url = `chat/GetUser/${uid}`
+
+  return this.http.get(url)
+
+
+}
+
 
 
 }

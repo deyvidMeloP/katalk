@@ -19,15 +19,8 @@ closedMessage: boolean = false
 username: string| null = ""
 usernames: string[] = []
 message: string = ""
-chatEntity: ChatEntity = {
-  userSend: '',
-  userGet: '',
-  messageChat: '',
-  dateChat: '',
-  idChat: 0
-};
-
-
+userSearch: any
+teste: any[] = []
   constructor(private api: ApiService ,private changeService: ChangeChatService){}
 
   ngOnInit(){
@@ -37,7 +30,14 @@ chatEntity: ChatEntity = {
     this.changeService.currentChatMessage.subscribe((data)=>{
       if(data != "" && data){
         this.chatInformation = data
+        const box_All = document.querySelector(".box_All_Message") as HTMLElement
+      
+        if(box_All){
+          box_All.style.display = 'none'
+        }
+        
         this.newChat()
+        
       }
     })
     this.getMessage()
@@ -53,10 +53,10 @@ chatEntity: ChatEntity = {
       (data: any[])=>{
 
         this.allMessage = data
-        
         this.keysMessage = Object.keys(this.allMessage)
-    
         this.valuesMessage = Object.values(this.allMessage)
+    
+        console.log("llaa"+this.valuesMessage.toLocaleString())
       
       },
 
@@ -71,24 +71,53 @@ chatEntity: ChatEntity = {
 
     this.api.getMessage().subscribe(
       (data: any)=>{
-        
-        if(localStorage.getItem('Auth') == data.userSend){
+     
+        if(localStorage.getItem('ChatOpen')){
+          console.log("auth"+localStorage.getItem('Auth'))
+          console.log("get"+ data.userGet)
+          console.log("chat aberto"+localStorage.getItem('ChatOpen'))
+          console.log("send"+data.userSend)
+        }
+        for(let clear of this.clearMessage){
+          console.log("antes de entrar"+clear.messageChat)
+        }
 
+        if(localStorage.getItem('Auth') == data.userGet && localStorage.getItem('ChatOpen') == data.userSend){
+          this.updateMessage(data)
           this.clearMessage.push(data)
-          this.keysMessage.push(data.userSend)
-          this.valuesMessage.push(data)
-       
-          this.usernames.push(this.chatInformation.username)
          
-          const message_Box = document.querySelector(".message_Box") as HTMLElement
-          const last = message_Box.lastElementChild
-          if(last)
-            setTimeout(() => {
+          for(let clear of this.clearMessage){
+            console.log("testando cleardentro"+clear.messageChat)
+          }
+          
+            setTimeout(() => {   
+              const message_Box = document.querySelector(".message_Box") as HTMLElement
+              const last = message_Box.lastElementChild as HTMLElement         
               last.scrollIntoView({ behavior: 'auto' });    
+              last.style.display = "flex"
             }, 0);
           
+            
+            if(!this.chatInformation.username){
+            
+              this.api.getByUser(data.userSend).subscribe(
+                (data: any)=>{
+                  this.userSearch = data
+                  this.usernames.push(data.userUsername)
+                }
+              )
+              return
+            }
+            this.usernames.push(this.chatInformation.username)
+            return
         }
-       
+
+        if(localStorage.getItem('Auth') == data.userGet){
+          this.updateMessage(data)
+          
+        }
+        
+        
       },
 
       (err: any[])=>{
@@ -98,26 +127,47 @@ chatEntity: ChatEntity = {
     )
   }
 
-  createGetMessage(){
+  updateMessage(data: any){
+    if(this.keysMessage.includes(data.userSend)){
+
+      const index = this.keysMessage.indexOf(data.userSend)
+
+      this.valuesMessage[index].push(data)
+        
+      return
+
+    }
+        
+    this.keysMessage.push(data.userSend)
+    this.valuesMessage.push([data])
 
   }
 
-  newChat(){
+  createGetMessage(){
+
+  }
+//PASSA TODO MUNDO PRA WEBSOCKET PARA SEREM ATUALIZADOS SEMPRE QUE HOUVER ATUALIZAÇÃO
+  async newChat(){
     this.closedMessage = true
     this.clearMessage = []
     const index = this.keysMessage.indexOf(this.chatInformation.uid)
     if(index >=0){
-      this.clearMessage = this.valuesMessage[index]
+      const value = this.valuesMessage[index]
+      this.clearMessage = [...value]
     }
-   
-    setTimeout(() => {
+
+    for(let clear of this.clearMessage){
+      console.log("testando clear"+clear.messageChat)
+    }
+
+   await setTimeout(() => {
       const box_All = document.querySelector(".box_All_Message") as HTMLElement 
       box_All.style.width = "100%"
       box_All.style.height = "100%"
       const message = document.querySelectorAll(".messageChat_Item") as NodeListOf<HTMLElement>
       
       message.forEach((el)=>{
-
+        el.style.display = 'flex'
         const chat  = el.getAttribute("data-chat")
         if(chat == localStorage.getItem("Auth")){
          this.username = "Eu"
@@ -147,19 +197,29 @@ chatEntity: ChatEntity = {
 
       const message_Box = document.querySelector(".message_Box") as HTMLElement
       const last = message_Box.lastElementChild
-      if(last)
-          last.scrollIntoView({ behavior: 'auto' });    
+      if(last){
+        last.scrollIntoView({ behavior: 'auto' });  
+      }
+    
+      box_All.style.display = "flex"
     }, 0);
- 
-   
     
   }
   
   sendMessage(){
+    if(this.message != ''){
+
+    let chatEntity: ChatEntity = {
+      userSend: '',
+      userGet: '',
+      messageChat: '',
+      dateChat: '',
+      idChat: 0
+    };
 
     const dateString: any = new Date().toLocaleDateString()
     const dateHours: any = new Date().toLocaleTimeString()
-     
+   
     const year = `${dateString[6]}${dateString[7]}${dateString[8]}${dateString[9]}`
     const month =  `${dateString[3]}${dateString[4]}`
     const day = `${dateString[0]}${dateString[1]}`
@@ -167,12 +227,12 @@ chatEntity: ChatEntity = {
      let format: string = `${year}-${month}-${day}`
      
      const dateFormat: string = `${format}T${dateHours}`
-     this.chatEntity.userSend = `${localStorage.getItem('Auth')}`
-     this.chatEntity.userGet = this.chatInformation.uid
-     this.chatEntity.dateChat = dateFormat
-     this.chatEntity.messageChat = this.message
+     chatEntity.userSend = `${localStorage.getItem('Auth')}`
+     chatEntity.userGet = this.chatInformation.uid
+     chatEntity.dateChat = dateFormat
+     chatEntity.messageChat = this.message
+     this.clearMessage.push(chatEntity)
      
-     this.clearMessage.push(this.chatEntity)
      this.usernames.push("Eu")
 
      setTimeout(() => {   
@@ -180,7 +240,7 @@ chatEntity: ChatEntity = {
 
      }, 0);
     
-     this.api.sendMessage(this.chatEntity)
+     this.api.sendMessage(chatEntity)
   
     
      /*const aux  = this.clearMessage.reverse()
@@ -189,7 +249,7 @@ chatEntity: ChatEntity = {
      this.keysMessage.push(this.chatEntity.userGet)*/
      
      this.message = ""
-
+    }
   }
 
   createSendMessage(){
@@ -210,7 +270,7 @@ chatEntity: ChatEntity = {
         
     const information = message.querySelector(".message_Information") as HTMLElement
     information.style.flexDirection = "row-reverse"
-
+    message.style.display = 'flex'
   }
 
   changeState(){

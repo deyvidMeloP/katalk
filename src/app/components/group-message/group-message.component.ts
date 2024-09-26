@@ -43,6 +43,11 @@ export class GroupMessageComponent implements OnInit {
     this.getAllMessage();
     this.getGroupMessage();
     this.getFriendList()
+    this.getMessage()
+
+    if(localStorage.getItem('ChatOpen')){
+      localStorage.setItem('ChatOpen', '')
+    }
 
     /*
 
@@ -101,6 +106,58 @@ export class GroupMessageComponent implements OnInit {
     )
   }
 
+  getMessage(){
+
+    this.apiService.getMessage().subscribe(
+      (data: any)=>{
+        
+        if(localStorage.getItem('Auth') == data.userGet){
+            if (!this.usernameGroup.some(group=>  group.uid.includes(data.userSend))){
+             //refazer isso, criar uma linkedlist com username e Uid
+           
+             const user = this.allUser.filter(el => el.userUid == data.userSend)
+             const username = user[0].userUsername
+             
+             const group = {
+               "username": username,
+               "lastMessage": data.messageChat,
+               "uid": data.userSend,
+               "userSend": data.userSend,
+               "userGet": data.userGet,
+               "url": "null"
+             }
+           
+             const messageGroup = {
+             
+              "idChat": user[0].userId,
+              "userSend": data.userSend,
+              "messageChat": data.messageChat,
+              "userGet": data.userGet,
+              "dateChat": data.dateChat
+    
+             }
+
+             this.addGroupFilter.push(group)
+             this.usernameGroup.unshift(group)
+             this.groupKeys.unshift(data.userSend)
+             this.groupMessage.unshift(messageGroup)
+
+
+            }
+
+ 
+        }
+       
+      },
+
+      (err: any[])=>{
+        console.log("erro ao receber a mensagem ", err)
+      }
+      
+    )
+  }
+
+
   getAllUser(){
 
     this.apiService.getAllUser().subscribe(
@@ -134,9 +191,6 @@ export class GroupMessageComponent implements OnInit {
 
         }
       )
-      for(let users of this.usernameGroup){
-       console.log("AQUI"+users.uid) 
-      }
       },
 
       (err: any[])=>{
@@ -165,8 +219,9 @@ export class GroupMessageComponent implements OnInit {
   }
 
   chatMessage(group: any){
+    
+    localStorage.setItem('ChatOpen', group.uid)
     const box = document.querySelector(".background") as HTMLElement
-
     this.chat.changeChat(group);
     
   }
@@ -230,6 +285,14 @@ teste(){
   
 }
 
+clickCloseMenu(){
+  const menuClose = document.querySelector(".menu_Close") as HTMLElement
+ 
+  if(menuClose && menuClose.classList.contains('translateIcon')){
+    this.showMenu()  
+  }
+}
+
 async closeMenu(){
   const icon = document.querySelectorAll(".menuCircle span") as NodeListOf<HTMLElement>
   const menuButton = document.querySelector(".menu_Button") as HTMLElement
@@ -290,8 +353,20 @@ addNewGroup(){
     "url": "null"
   }
 
+  const messageGroup = {
+             
+    "idChat": user[0].userId,
+    "userSend": key.userUid,
+    "messageChat": '',
+    "userGet": key.friendUid,
+    "dateChat": ''
+
+   }
+
   this.addGroupFilter.push(group)
   this.usernameGroup.unshift(group)
+  this.groupKeys.unshift(key.friendUid)
+  this.groupMessage.unshift(messageGroup)
  }
 
 

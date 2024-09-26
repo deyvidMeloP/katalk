@@ -41,11 +41,10 @@
             </div>
             
         </div>
-     
-       
+        
     </div>
 
-    <form class="send_Message" (ngSubmit)="sendMessage()" style="justify-content: center; display: flex; width: 100%;">
+    <form class="send_Message" (ngSubmit)="sendMessage()" style="justify-content: center; display: flex; width: 100%; position: absolute; bottom: 20px;">
 
         <input type="text" [(ngModel)]="message" name="textMessage" style="width: 500px" autocomplete="off">
 
