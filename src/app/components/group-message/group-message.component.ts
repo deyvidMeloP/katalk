@@ -220,9 +220,11 @@ export class GroupMessageComponent implements OnInit {
 
   chatMessage(group: any){
     
-    localStorage.setItem('ChatOpen', group.uid)
-    const box = document.querySelector(".background") as HTMLElement
-    this.chat.changeChat(group);
+    if(group.uid != localStorage.getItem('ChatOpen')){
+      localStorage.setItem('ChatOpen', group.uid)
+      const box = document.querySelector(".background") as HTMLElement
+      this.chat.changeChat(group);
+    }    
     
   }
 

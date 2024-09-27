@@ -71,7 +71,7 @@ teste: any[] = []
 
     this.api.getMessage().subscribe(
       (data: any)=>{
-     
+
         if(localStorage.getItem('ChatOpen')){
           console.log("auth"+localStorage.getItem('Auth'))
           console.log("get"+ data.userGet)
@@ -83,7 +83,7 @@ teste: any[] = []
         }
 
         if(localStorage.getItem('Auth') == data.userGet && localStorage.getItem('ChatOpen') == data.userSend){
-          this.updateMessage(data)
+          this.updateMessage(data, data.userSend)
           this.clearMessage.push(data)
          
           for(let clear of this.clearMessage){
@@ -113,7 +113,7 @@ teste: any[] = []
         }
 
         if(localStorage.getItem('Auth') == data.userGet){
-          this.updateMessage(data)
+          this.updateMessage(data, data.userSend)
           
         }
         
@@ -127,18 +127,18 @@ teste: any[] = []
     )
   }
 
-  updateMessage(data: any){
-    if(this.keysMessage.includes(data.userSend)){
+  updateMessage(data: any, uid: string){
+    if(this.keysMessage.includes(uid)){
 
-      const index = this.keysMessage.indexOf(data.userSend)
+      const index = this.keysMessage.indexOf(uid)
 
       this.valuesMessage[index].push(data)
-        
+      
       return
 
     }
         
-    this.keysMessage.push(data.userSend)
+    this.keysMessage.push(uid)
     this.valuesMessage.push([data])
 
   }
@@ -240,6 +240,7 @@ teste: any[] = []
 
      }, 0);
     
+     this.updateMessage(chatEntity, chatEntity.userGet)
      this.api.sendMessage(chatEntity)
   
     
