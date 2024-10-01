@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ChangeChatService } from '../../services/change-chat.service';
 import { ApiService } from '../../services/api.service';
 import { ChatEntity } from '../../chat-entity.model';
+import { icon } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
   selector: 'app-chat-message',
@@ -26,7 +27,8 @@ teste: any[] = []
   ngOnInit(){
 
     this.getAllMessage()
-   
+    
+    this.requestNotificationPermission()
     this.changeService.currentChatMessage.subscribe((data)=>{
       if(data != "" && data){
         this.chatInformation = data
@@ -43,6 +45,18 @@ teste: any[] = []
     this.getMessage()
   }
 
+  requestNotificationPermission() {
+    if (Notification.permission === 'default') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          console.log('Permissão de notificação concedida');
+        } else {
+          console.log('Permissão de notificação negada');
+        }
+      });
+    }
+  }
+  
   ngAfterViewInit(): void {
  
   }
@@ -68,9 +82,24 @@ teste: any[] = []
   }
 
   getMessage(){
-
+   
     this.api.getMessage().subscribe(
       (data: any)=>{
+     
+        if (Notification.permission === 'granted') {
+          console.log("notificação permitida")
+
+          navigator.serviceWorker.ready.then(swRegistration => {
+            console.log("aquuiu")
+            swRegistration.showNotification('New Message', {
+              body: 'Você recebeu uma nova mensagem!',
+              icon: 'https://files.tecnoblog.net/wp-content/uploads/2022/09/stable-diffusion-imagem.jpg',
+            });
+          });
+        } else if (Notification.permission === 'default') {
+          // Pede permissão caso necessário
+          Notification.requestPermission();
+        }
 
         if(localStorage.getItem('ChatOpen')){
           console.log("auth"+localStorage.getItem('Auth'))
@@ -82,7 +111,7 @@ teste: any[] = []
           console.log("antes de entrar"+clear.messageChat)
         }
 
-        if(localStorage.getItem('Auth') == data.userGet && localStorage.getItem('ChatOpen') == data.userSend){
+        if(localStorage.getItem('ChatOpen') == data.userSend){
           this.updateMessage(data, data.userSend)
           this.clearMessage.push(data)
          
@@ -111,12 +140,8 @@ teste: any[] = []
             this.usernames.push(this.chatInformation.username)
             return
         }
-
-        if(localStorage.getItem('Auth') == data.userGet){
-          this.updateMessage(data, data.userSend)
-          
-        }
-        
+      
+        this.updateMessage(data, data.userSend)
         
       },
 
@@ -127,6 +152,43 @@ teste: any[] = []
     )
   }
 
+  notification(message: String){
+    //new Notification(`${message}`, {icon: "https://files.tecnoblog.net/wp-content/uploads/2022/09/stable-diffusion-imagem.jpg"})
+    
+  }
+  showCustomNotification() {
+    if (Notification.permission === 'default') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          this.displayNotification();
+        }
+      });
+    } else if (Notification.permission === 'granted') {
+      this.displayNotification();
+    }
+  }
+  
+  displayNotification() {
+    const options = {
+      body: 'Esta é uma notificação personalizada',
+      icon: '/images/icon.png',   // ícone da notificação
+      badge: '/images/badge.png', // ícone pequeno (badge)
+      image: '/images/banner.png', // imagem grande
+      actions: [
+        { action: 'confirm', title: 'Aceitar' },
+        { action: 'cancel', title: 'Cancelar' }
+      ],
+      vibrate: [200, 100, 200],  // Vibração
+    };
+  
+    const notification = new Notification('Notificação de chamada!', options);
+  
+    notification.onclick = (event) => {
+      console.log('Notificação clicada', event);
+    };
+  }
+  
+  
   updateMessage(data: any, uid: string){
     if(this.keysMessage.includes(uid)){
 

@@ -14,71 +14,82 @@ export class WebRTCService {
   constructor(private api: ApiService) {}
 
   
-startCall() {
-  const configuration = {
-    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-  };
-  this.peerConnection = new RTCPeerConnection(configuration);
-  this.peerConnection.oniceconnectionstatechange = () => {
+  startCall() {
+    const configuration = {
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+    };
+  
+    this.peerConnection = new RTCPeerConnection(configuration);
+    
+    this.peerConnection.oniceconnectionstatechange = () => {
+      if (this.peerConnection) {
+        console.log("ICE Connection State:", this.peerConnection.iceConnectionState);
+      }
+    };
+  
+    this.peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("Enviando candidato ICE...");
+        this.api.sendCandidate(event.candidate); // Envia o candidato ICE
+      } else {
+        console.log("Todos os candidatos ICE foram enviados.");
+      }
+    };
+  
+    this.peerConnection.ontrack = (event) => {
+      const remoteStream = new MediaStream();
+      remoteStream.addTrack(event.track);
+      const audioElement = document.getElementById('remoteAudio') as HTMLAudioElement;
+      if (audioElement) {
+        audioElement.srcObject = remoteStream;
+      }
+    };
+  
+    // Captura a mídia do usuário (áudio e vídeo)
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        console.log('Câmera e microfone capturados:', stream);
+        stream.getTracks().forEach((track) => {
+          if (this.peerConnection) {
+            this.peerConnection.addTrack(track, stream);
+          }
+        });
+  
+        // Exibe o vídeo local (para o usuário ver a si mesmo)
+        const localVideo = document.getElementById('localVideo') as HTMLVideoElement;
+        if (localVideo) {
+          localVideo.srcObject = stream;
+        }
+  
+        // Chama o createOffer agora que a conexão e a mídia estão configuradas
+        console.log("Criando oferta...");
+        this.createOffer(); // A chamada aqui está correta
+      })
+      .catch((error) => {
+        console.error('Erro ao capturar a câmera e microfone:', error);
+      });
+  }
+  
+  createOffer() {
     if (this.peerConnection) {
-      console.log("ICE Connection State:", this.peerConnection.iceConnectionState);
+      this.peerConnection.createOffer()
+        .then((offer) => {
+          console.log("Oferta criada:", offer);
+          return this.peerConnection!.setLocalDescription(offer);
+        })
+        .then(() => {
+          console.log("Descrição local definida.");
+          // Enviar a oferta para o outro peer
+          this.api.sendOffer(this.peerConnection!.localDescription);
+        })
+        .catch((error) => {
+          console.error('Erro ao criar oferta:', error);
+        });
+    } else {
+      console.error("peerConnection não está inicializada.");
     }
-  };
-
-  this.peerConnection.onicecandidate = (event) => {
-    if (event.candidate) {
-      console.log("prepara para enviar candidatos de A")
-      // Enviar o candidato ICE para o outro peer via WebSocket
-      this.api.sendCandidate(event.candidate);
-    }
-  };
-
-  this.peerConnection.ontrack = (event) => {
-    const remoteStream = new MediaStream();
-    remoteStream.addTrack(event.track);
-    // Atribuir ao elemento de áudio/vídeo
-    const audioElement = document.getElementById('remoteAudio') as HTMLAudioElement;
-    if (audioElement) {
-      audioElement.srcObject = remoteStream;
-    }
-  };
-
-  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-  .then((stream) => {
-    console.log('Câmera e microfone capturados:', stream);
-    stream.getTracks().forEach((track) => {
-      if(this.peerConnection)
-      this.peerConnection.addTrack(track, stream); // Adiciona a track de vídeo e áudio
-    });
-
-    // Exibe o vídeo local (para o usuário ver a si mesmo)
-    const localVideo = document.getElementById('localVideo') as HTMLVideoElement;
-    if (localVideo) {
-      localVideo.srcObject = stream;
-    }
-    this.createOffer()
-  })
-  .catch((error) => {
-    console.error('Erro ao capturar a câmera e microfone:', error);
-  });
-
-}
-
-createOffer(){
-  if(this.peerConnection)
-  this.peerConnection.oniceconnectionstatechange = () => {
-    if (this.peerConnection) {
-      console.log("ICE Connection State:", this.peerConnection.iceConnectionState);
-    }
-  };
-  if(this.peerConnection)
-  this.peerConnection.createOffer().then((offer) => {
-    if(this.peerConnection)
-    this.peerConnection.setLocalDescription(offer);
-    this.api.sendOffer(offer)
-
-  });
-}
+  }
+  
 
 async newRemote(offerSdp: any) {
   if (!this.peerConnection) {
@@ -88,10 +99,6 @@ async newRemote(offerSdp: any) {
     this.peerConnection = new RTCPeerConnection(configuration);
   }
 
-  // Primeira desserialização (do corpo inteiro)
-  
-  // Segunda desserialização (do campo sdp, que também está serializado)
- 
   this.peerConnection.onicecandidate = (event) => {
     if (event.candidate) {
       console.log("Candidatos ICE de B");
@@ -108,7 +115,6 @@ async newRemote(offerSdp: any) {
    
         const answer = await this.peerConnection.createAnswer()
     
-
         this.peerConnection.setLocalDescription(answer);
         this.api.sendAnswer(answer);
      
@@ -160,7 +166,6 @@ remoteCall(answer: any){
 
 handleRemoteCandidate(data: any) {
  // Supondo que você receba o corpo do WebRTCMessage como string
-  
   if (this.peerConnection && data.candidate) {
     const rtcCandidate = new RTCIceCandidate({
       candidate: data.candidate.candidate,

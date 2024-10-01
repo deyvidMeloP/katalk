@@ -17,7 +17,7 @@ export class RegisterComponent {
 
   constructor(private auth: AuthService){}
   ngOnInit(): void {
-
+    localStorage.clear();
   }
 
   register(){

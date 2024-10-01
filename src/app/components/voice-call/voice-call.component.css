@@ -3,10 +3,15 @@
     display: flex;
     width: 40px;
     height: 40px;
+    background: none;
   }
 
   video {
     width: 300px; /* Ajuste conforme necessário */
     height: auto;
     border: 2px solid #000;
+  }
+
+  app-voice-call{
+    background: none;
   }

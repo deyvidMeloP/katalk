@@ -58,11 +58,11 @@ export class ApiService {
   }
 
   getMessage(): Observable<ChatEntity> {
-    return this.stompService.watch('/topic/notifications').pipe(
+    return this.stompService.watch(`/topic/notifications/${localStorage.getItem('Auth')}`).pipe(
       map(message => {
         const body = JSON.parse(message.body);
  
-        console.log('Notification receivedaakakaka:', body); // Verificando o que foi recebido
+       // console.log('Notification receivedaakakaka:', body); // Verificando o que foi recebido
         return body as ChatEntity;
       })
     );
@@ -81,32 +81,47 @@ export class ApiService {
 
   sendCandidateofB(event: any){
     console.log("CANDIDATOS DE B ENVIADOS PARA A")
+    const call = {
+      sendUid:  localStorage.getItem('sendCall'),
+      getUid: localStorage.getItem('getCall'),
+      date: localStorage.getItem('dateCall')
+    }
+    console.log("candidatos B")
     const webRTCMessage = {
       type: 'ice-candidate',
       candidate: {
         candidate: event.candidate,
         sdpMid: event.sdpMid,
         sdpMLineIndex: event.sdpMLineIndex
-      }
+      },
+      call: call
     };
     this.stompService.publish({
-      destination: '/app/sendCandidate',
+      destination: `/app/sendCandidateB`,
       body: JSON.stringify(webRTCMessage),
     });
     
 }
 
   sendCandidate(event: any){
+
+    const call = {
+      sendUid: localStorage.getItem('sendCall'),
+      getUid: localStorage.getItem('getCall'),
+      date: localStorage.getItem('dateCall')
+    }
+console.log("candidatos A")
     const webRTCMessage = {
       type: 'ice-candidate',
       candidate: {
         candidate: event.candidate,
         sdpMid: event.sdpMid,
         sdpMLineIndex: event.sdpMLineIndex
-      }
+      },
+      call: call
     };
     this.stompService.publish({
-      destination: '/app/sendCandidate',
+      destination: "/app/sendCandidateA",
       body: JSON.stringify(webRTCMessage),
     });
     
@@ -124,13 +139,46 @@ console.log('candidatos')
   }
 
   sendOffer(offer: any){
-      const webRTCMessage = {
+
+    const dateString: any = new Date().toLocaleDateString()
+    const dateHours: any = new Date().toLocaleTimeString()
+   
+    const year = `${dateString[6]}${dateString[7]}${dateString[8]}${dateString[9]}`
+    const month =  `${dateString[3]}${dateString[4]}`
+    const day = `${dateString[0]}${dateString[1]}`
+  
+    let format: string = `${year}-${month}-${day}`
+     
+    const dateFormat: string = `${format}T${dateHours}`
+    localStorage.setItem('dateCall', dateFormat)
+    const sendUid =  localStorage.getItem('Auth')
+    const getUid =  localStorage.getItem('ChatOpen')
+
+    const url = "/topic/answerCall/"
+    const num1 = `${localStorage.getItem('Auth')}/`
+    const num2 = `${localStorage.getItem('getCall')}`
+    console.log("url: " +url+num1+num2)
+    if(sendUid){
+      localStorage.setItem('sendCall', sendUid)
+    }
+    if(getUid){
+      localStorage.setItem('getCall', getUid)
+    }
+   
+    const call = {
+      sendUid: localStorage.getItem('sendCall'),
+      getUid: localStorage.getItem('getCall'),
+      date: dateFormat
+    }
+    console.log("enviei a offer")
+    const webRTCMessage = {
         type: 'offer', // Indica que é uma oferta
-        sdp: offer.sdp // Envia o campo sdp sem serializar
+        sdp: offer.sdp, // Envia o campo sdp sem serializar
+        call: call
       };
-    
+      console.log("rtc offer+ ", webRTCMessage)
       this.stompService.publish({
-        destination: '/app/sendOffer', // O destino definido no backend
+        destination: `/app/sendOffer`, // O destino definido no backend
         body: JSON.stringify(webRTCMessage) // Converte o objeto WebRTCMessage para JSON
       });
     
@@ -147,10 +195,17 @@ console.log('candidatos')
   }
 
   sendAnswer(answer: any) {
+    const call = {
+      sendUid: localStorage.getItem('sendCall'),
+      getUid: localStorage.getItem('getCall'),
+      date: localStorage.getItem('dateCall')
+    }
 
+    console.log("resposta enviada")
     const webRTCMessage = {
       type: 'answer', // Indica que é uma oferta
-      sdp: answer.sdp // Serializa o objeto offer
+      sdp: answer.sdp, // Serializa o objeto offer
+      call: call
     };
 
     this.stompService.publish({
@@ -168,7 +223,7 @@ console.log('candidatos')
   }
   
   getAnswerCall(): Observable<any> {
-    return this.stompService.watch('/topic/answerCall').pipe(
+    return this.stompService.watch(`/topic/answerCall/${localStorage.getItem('Auth')}/${localStorage.getItem('getCall')}`).pipe(
       map(message => {
         const body = JSON.parse(message.body);
         console.log('ANSWER RECEBIDA:', body); // Verificando o que foi recebido
@@ -178,7 +233,7 @@ console.log('candidatos')
   }
 
   getCandidateofA(): Observable<any> {
-    return this.stompService.watch('/topic/getCandidate').pipe(
+    return this.stompService.watch(`/topic/getCandidateA/${localStorage.getItem('Auth')}`).pipe(
       map(message => {
         const body = JSON.parse(message.body);
         console.log('CANDIDATO RECEBIDO DE A:', body); // Verificando o que foi recebido
@@ -188,7 +243,7 @@ console.log('candidatos')
   }
 
   getCandidateofB(): Observable<any> {
-    return this.stompService.watch('/topic/getCandidate').pipe(
+    return this.stompService.watch(`/topic/getCandidateB/${localStorage.getItem('Auth')}`).pipe(
       map(message => {
         const body = JSON.parse(message.body);
         console.log('CANDIDATO RECEBIDO de B:', body); // Verificando o que foi recebido
@@ -199,10 +254,9 @@ console.log('candidatos')
   
 
   getOffer(): Observable<any> {
-    return this.stompService.watch('/topic/getOffer').pipe(
+    return this.stompService.watch(`/topic/getOffer/${localStorage.getItem('Auth')}`).pipe(
       map(message => {
         const body = JSON.parse(message.body);
- 
         console.log('OFFER RECEBIDA:', body); // Verificando o que foi recebido
         return body as any;
       })

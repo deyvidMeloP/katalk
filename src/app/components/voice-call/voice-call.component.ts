@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { WebRTCService } from '../../services/web-rtc.service';
 import { ApiService } from '../../services/api.service';
 
+
+type Offer = {type: String} & {sdp: String}
+
 @Component({
   selector: 'app-voice-call',
   templateUrl: './voice-call.component.html',
@@ -11,11 +14,13 @@ export class VoiceCallComponent implements OnInit{
 
 constructor(private webRTCService: WebRTCService, private api: ApiService){
 
-} localStream: MediaStream | null = null;
+} 
+localStream: MediaStream | null = null;
 remoteStream: MediaStream | null = null;
 candidateA: any
-offer: any;
+offerRTC: any;
 answer: any
+offer: any
 
   ngOnInit(): void {
    this.getOffer()
@@ -26,19 +31,17 @@ answer: any
 
   clickCall(){
     this.webRTCService.startCall()
-    this.webRTCService.createOffer()
+   
+  
   }
 
   
   getCandidate(){
     this.api.getCandidateofA().subscribe(
       (data: any)=>{
-        if(localStorage.getItem('Auth') == 'UtrgzQdujMTqg1l7RooU499Rd5i2'){
           console.log('Candidatos de A recebidos em B', data);
           this.candidateA = data; // Processa a oferta recebida 
           this.webRTCService.handleRemoteCandidate(data)
-          console.log(data)
-        }
       },
       (err: any)=>{
         console.log("erro ao receber a voiceCall");
@@ -50,12 +53,10 @@ answer: any
   getCandidateofB(){
     this.api.getCandidateofB().subscribe(
       (data: any)=>{
-        if(localStorage.getItem('Auth') == 'tbV8BWE6oHYm1R2B5CdzPqVzpBm1'){
           console.log('Candidatos de B recebidos em A', data);
           this.candidateA = data; // Processa a oferta recebida
           this.webRTCService.handleRemoteCandidate(data)
-          console.log(data)
-        }
+          console.log(data)     
       },
       (err: any)=>{
         console.log("erro ao receber a voiceCall");
@@ -66,13 +67,19 @@ answer: any
 
   getOffer(){
     
-    if(localStorage.getItem('Auth') == 'UtrgzQdujMTqg1l7RooU499Rd5i2'){
     this.api.getOffer().subscribe(
       (offer: any)=>{
-       
           console.log('OFFER  recebido em UTRGZ', offer);
-          this.offer = offer; // Processa a oferta recebida 
-          this.webRTCService.newRemote(offer)
+
+          const offerLocal: Offer = {
+            'type': offer.type,
+            'sdp': offer.sdp
+          }
+          this.offerRTC = offer; // Processa a oferta recebida 
+          localStorage.setItem('sendCall', this.offerRTC.call.sendUid)
+          localStorage.setItem('getCall', this.offerRTC.call.getUid)
+          localStorage.setItem('dateCall', this.offerRTC.call.date)
+          this.webRTCService.newRemote(offerLocal)
              
       },
       (err: any)=>{
@@ -80,15 +87,17 @@ answer: any
       }
     )
   }
-  }
 
   getAnswerCall(){
-    if(localStorage.getItem('Auth') == 'tbV8BWE6oHYm1R2B5CdzPqVzpBm1'){
  
       this.api.getAnswerCall().subscribe(
       (data: any)=>{
           this.answer = data
-          this.webRTCService.remoteCall(data)
+          const answer: Offer = {
+            'type': data.type,
+            'sdp': data.sdp
+          }
+          this.webRTCService.remoteCall(answer)
           console.log('ANSWER RECEBIDA NA HOME:', data);
       
       },
@@ -96,7 +105,6 @@ answer: any
         console.log("erro ao receber a voiceCall");
       }
     )
-    }
 
  /* async startCall() {
     if(localStorage.getItem('Auth') == 'tbV8BWE6oHYm1R2B5CdzPqVzpBm1'){
