@@ -21,7 +21,7 @@ export class ApiService {
     brokerURL: 'ws://localhost:8080/chat-websocket',
     connectHeaders: {},
     debug: (msg: string) => {
-      console.log(new Date(), msg);
+   
     },
     heartbeatIncoming: 0,
     heartbeatOutgoing: 20000,
@@ -35,7 +35,9 @@ export class ApiService {
     this.stompService.activate();
 
   }
-
+registerWorker(){
+  
+}
   sendMessage(chatEntity: ChatEntity) {
     this.stompService.publish({
       destination: '/app/sendMessage',
@@ -73,20 +75,18 @@ export class ApiService {
       map(message => {
         const body = JSON.parse(message.body);
  
-        console.log('invite CALL received:', body); // Verificando o que foi recebido
         return body as any;
       })
     );
   }
 
   sendCandidateofB(event: any){
-    console.log("CANDIDATOS DE B ENVIADOS PARA A")
+
     const call = {
       sendUid:  localStorage.getItem('sendCall'),
       getUid: localStorage.getItem('getCall'),
       date: localStorage.getItem('dateCall')
     }
-    console.log("candidatos B")
     const webRTCMessage = {
       type: 'ice-candidate',
       candidate: {
@@ -110,7 +110,7 @@ export class ApiService {
       getUid: localStorage.getItem('getCall'),
       date: localStorage.getItem('dateCall')
     }
-console.log("candidatos A")
+
     const webRTCMessage = {
       type: 'ice-candidate',
       candidate: {
@@ -157,7 +157,7 @@ console.log('candidatos')
     const url = "/topic/answerCall/"
     const num1 = `${localStorage.getItem('Auth')}/`
     const num2 = `${localStorage.getItem('getCall')}`
-    console.log("url: " +url+num1+num2)
+   
     if(sendUid){
       localStorage.setItem('sendCall', sendUid)
     }
@@ -170,13 +170,13 @@ console.log('candidatos')
       getUid: localStorage.getItem('getCall'),
       date: dateFormat
     }
-    console.log("enviei a offer")
+    
     const webRTCMessage = {
         type: 'offer', // Indica que é uma oferta
         sdp: offer.sdp, // Envia o campo sdp sem serializar
         call: call
       };
-      console.log("rtc offer+ ", webRTCMessage)
+   
       this.stompService.publish({
         destination: `/app/sendOffer`, // O destino definido no backend
         body: JSON.stringify(webRTCMessage) // Converte o objeto WebRTCMessage para JSON
@@ -201,7 +201,7 @@ console.log('candidatos')
       date: localStorage.getItem('dateCall')
     }
 
-    console.log("resposta enviada")
+   
     const webRTCMessage = {
       type: 'answer', // Indica que é uma oferta
       sdp: answer.sdp, // Serializa o objeto offer
@@ -226,7 +226,7 @@ console.log('candidatos')
     return this.stompService.watch(`/topic/answerCall/${localStorage.getItem('Auth')}/${localStorage.getItem('getCall')}`).pipe(
       map(message => {
         const body = JSON.parse(message.body);
-        console.log('ANSWER RECEBIDA:', body); // Verificando o que foi recebido
+
         return body as any;
       })
     );
@@ -236,7 +236,7 @@ console.log('candidatos')
     return this.stompService.watch(`/topic/getCandidateA/${localStorage.getItem('Auth')}`).pipe(
       map(message => {
         const body = JSON.parse(message.body);
-        console.log('CANDIDATO RECEBIDO DE A:', body); // Verificando o que foi recebido
+
         return body as any;
       })
     );
@@ -246,7 +246,7 @@ console.log('candidatos')
     return this.stompService.watch(`/topic/getCandidateB/${localStorage.getItem('Auth')}`).pipe(
       map(message => {
         const body = JSON.parse(message.body);
-        console.log('CANDIDATO RECEBIDO de B:', body); // Verificando o que foi recebido
+
         return body as any;
       })
     );
@@ -257,7 +257,7 @@ console.log('candidatos')
     return this.stompService.watch(`/topic/getOffer/${localStorage.getItem('Auth')}`).pipe(
       map(message => {
         const body = JSON.parse(message.body);
-        console.log('OFFER RECEBIDA:', body); // Verificando o que foi recebido
+
         return body as any;
       })
     );

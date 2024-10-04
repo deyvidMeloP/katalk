@@ -85,21 +85,13 @@ teste: any[] = []
    
     this.api.getMessage().subscribe(
       (data: any)=>{
-     
-        if (Notification.permission === 'granted') {
-          console.log("notificação permitida")
-
-          navigator.serviceWorker.ready.then(swRegistration => {
-            console.log("aquuiu")
-            swRegistration.showNotification('New Message', {
-              body: 'Você recebeu uma nova mensagem!',
-              icon: 'https://files.tecnoblog.net/wp-content/uploads/2022/09/stable-diffusion-imagem.jpg',
-            });
-          });
-        } else if (Notification.permission === 'default') {
-          // Pede permissão caso necessário
-          Notification.requestPermission();
-        }
+        navigator.serviceWorker.getRegistration().then(function(reg) {
+          if (reg) {
+            console.log('Service worker registrado e ativo', reg);
+          } else {
+            console.log('Service worker não está registrado');
+          }
+        });
 
         if(localStorage.getItem('ChatOpen')){
           console.log("auth"+localStorage.getItem('Auth'))
@@ -155,17 +147,6 @@ teste: any[] = []
   notification(message: String){
     //new Notification(`${message}`, {icon: "https://files.tecnoblog.net/wp-content/uploads/2022/09/stable-diffusion-imagem.jpg"})
     
-  }
-  showCustomNotification() {
-    if (Notification.permission === 'default') {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          this.displayNotification();
-        }
-      });
-    } else if (Notification.permission === 'granted') {
-      this.displayNotification();
-    }
   }
   
   displayNotification() {

@@ -119,7 +119,7 @@ export class AuthService {
 
   logout(){
     this.fireauth.signOut().then(()=>{
-
+      localStorage.removeItem('Auth')
       localStorage.removeItem('toker');
       localStorage.removeItem('login')
       this.router.navigate(['/login'])

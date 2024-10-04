@@ -40,11 +40,14 @@
               "src/favicon.ico",
               "src/assets",
               "src/manifest.webmanifest"
+              
             ],
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json"
           },
           "configurations": {
             "production": {
@@ -61,7 +64,8 @@
                 }
               ],
               "outputHashing": "all",
-              "serviceWorker": true
+              "serviceWorker": true,
+              "ngswConfigPath": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
@@ -101,6 +105,7 @@
               "src/favicon.ico",
               "src/assets",
               "src/manifest.webmanifest"
+            
             ],
             "styles": [
               "src/styles.css"

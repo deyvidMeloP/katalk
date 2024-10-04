@@ -14,7 +14,8 @@ type GroupMessage = {username: string} & {lastMessage: string} & {uid: string} &
 })
 
 export class GroupMessageComponent implements OnInit {
-  constructor(private apiService: ApiService, private chat: ChangeChatService, private friendService: FriendListService ){}
+  constructor(private apiService: ApiService, private chat: ChangeChatService, private friendService: FriendListService ){
+  }
  //Recebe todas as mensagens desse usuário, enviadas e recebidas
   allMessage: any[] = []
   //valores de cada mensagem em ordem
@@ -39,7 +40,6 @@ export class GroupMessageComponent implements OnInit {
   toggle: boolean = true
 
   ngOnInit(): void {
-
     this.getAllMessage();
     this.getGroupMessage();
     this.getFriendList()
@@ -69,6 +69,21 @@ export class GroupMessageComponent implements OnInit {
 
   }
 
+
+ 
+    worker(){
+      
+        navigator.serviceWorker.getRegistration().then(function(reg) {
+          if (reg) {
+            console.log('Service worker registrado e ativo', reg);
+          } else {
+            console.log('Service worker não está registrado');
+          }
+        });
+        
+  
+    }
+    
   getAllMessage(){
 
     this.apiService.getAllMessage().subscribe(
@@ -112,6 +127,7 @@ export class GroupMessageComponent implements OnInit {
       (data: any)=>{
         
         if(localStorage.getItem('Auth') == data.userGet){
+          
             if (!this.usernameGroup.some(group=>  group.uid.includes(data.userSend))){
              //refazer isso, criar uma linkedlist com username e Uid
            
