@@ -20,7 +20,13 @@ remoteStream: MediaStream | null = null;
 candidateA: any
 offerRTC: any;
 answer: any
-offer: any
+offer: Offer = {
+  'type': '',
+  'sdp': ''
+}
+nameCall: string = ''
+callReceived: boolean = false
+callAccept: boolean = false
 
   ngOnInit(): void {
    this.getOffer()
@@ -29,9 +35,9 @@ offer: any
    this.getCandidateofB()
   }
 
-  clickCall(){
-    this.webRTCService.startCall()
-   
+  clickCall(mode: String){
+    this.callAccept = true
+    this.webRTCService.startCall(mode)
   
   }
 
@@ -69,23 +75,53 @@ offer: any
     
     this.api.getOffer().subscribe(
       (offer: any)=>{
-          console.log('OFFER  recebido em UTRGZ', offer);
+        console.log('Chamada recebida', offer);
+        
+        this.offer = {
+          'type': '',
+          'sdp': ''
+        }
+        
+        this.offerRTC = {}
 
-          const offerLocal: Offer = {
-            'type': offer.type,
-            'sdp': offer.sdp
-          }
-          this.offerRTC = offer; // Processa a oferta recebida 
-          localStorage.setItem('sendCall', this.offerRTC.call.sendUid)
-          localStorage.setItem('getCall', this.offerRTC.call.getUid)
-          localStorage.setItem('dateCall', this.offerRTC.call.date)
-          this.webRTCService.newRemote(offerLocal)
-             
+        const offerLocal: Offer = {
+          'type': offer.type,
+          'sdp': offer.sdp
+        }
+          
+        this.offer = offerLocal
+        this.offerRTC = offer
+
+        localStorage.setItem('sendCall', this.offerRTC.call.sendUid)
+        localStorage.setItem('getCall', this.offerRTC.call.getUid)
+        localStorage.setItem('dateCall', this.offerRTC.call.date)
+        this.nameCall = `${localStorage.getItem('sendCall')}`
+        this.callReceived = true
       },
       (err: any)=>{
         console.log("erro ao receber a voiceCall");
       }
     )
+  }
+
+  AcceptAnswer(){
+    this.callReceived = false
+    this.callAccept = true
+    console.log("ligação aceita")
+    console.log(this.offer.sdp)
+    this.webRTCService.newRemote(this.offer)
+  }
+
+  refuseAnswer(){
+    
+    const answer: Offer = {
+      'type': 'answer',
+      'sdp': 'recusada'
+    }
+
+    this.callReceived = false
+    this.api.sendAnswer(answer)
+    console.log("ligação recusada")
   }
 
   getAnswerCall(){
@@ -175,5 +211,9 @@ offer: any
     await this.webRTCService.handleAnswer(answer);
   }*/
 
+  }
+
+  closeCall(){
+    this.webRTCService.stopMediaStream()
   }
 }

@@ -3,6 +3,8 @@ import { Subject } from 'rxjs';
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 import { ChatEntity } from '../chat-entity.model';
 import { ApiService } from './api.service';
+type Offer = {type: String} & {sdp: String}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,27 +16,48 @@ export class WebRTCService {
   constructor(private api: ApiService) {}
 
   
-  startCall() {
+  startCall(mode: String) {
     const configuration = {
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     };
   
     this.peerConnection = new RTCPeerConnection(configuration);
     
+
     this.peerConnection.oniceconnectionstatechange = () => {
       if (this.peerConnection) {
         console.log("ICE Connection State:", this.peerConnection.iceConnectionState);
       }
     };
-  
-    this.peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        console.log("Enviando candidato ICE...");
-        this.api.sendCandidate(event.candidate); // Envia o candidato ICE
-      } else {
-        console.log("Todos os candidatos ICE foram enviados.");
+
+    this.api.getAnswerCall().subscribe(
+      (answer:Offer)=>{
+        if(!answer.sdp.includes('recusada') && this.peerConnection){
+
+          this.peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+              console.log("Enviando candidato ICE...");
+              this.api.sendCandidate(event.candidate); // Envia o candidato ICE
+            } else {
+              console.log("Todos os candidatos ICE foram enviados.");
+            }
+          };
+
+        }
+
+        else if(this.peerConnection){
+          alert("CHAMADA RECUSADA")
+
+          this.stopMediaStream()
+    
+        }
+        
+      },
+      (err: any)=>{
+        console.log("erro ao receber a offer" + err)
       }
-    };
+    )
+  
   
     this.peerConnection.ontrack = (event) => {
       const remoteStream = new MediaStream();
@@ -46,29 +69,54 @@ export class WebRTCService {
     };
   
     // Captura a mídia do usuário (áudio e vídeo)
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        console.log('Câmera e microfone capturados:', stream);
-        stream.getTracks().forEach((track) => {
-          if (this.peerConnection) {
-            this.peerConnection.addTrack(track, stream);
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          console.log('Câmera e microfone capturados:', stream);
+          stream.getTracks().forEach((track) => {
+            if (this.peerConnection) {
+              this.peerConnection.addTrack(track, stream);
+            }
+          });
+    
+          // Exibe o vídeo local (para o usuário ver a si mesmo)
+          const localVideo = document.getElementById('localVideo') as HTMLVideoElement;
+          if (localVideo) {
+            localVideo.srcObject = stream;
           }
+    
+          // Chama o createOffer agora que a conexão e a mídia estão configuradas
+          console.log("Criando oferta...");
+          this.createOffer(); // A chamada aqui está correta
+        })
+        .catch((error) => {
+          console.error('Erro ao capturar a câmera e microfone:', error);
         });
   
-        // Exibe o vídeo local (para o usuário ver a si mesmo)
-        const localVideo = document.getElementById('localVideo') as HTMLVideoElement;
-        if (localVideo) {
-          localVideo.srcObject = stream;
-        }
-  
-        // Chama o createOffer agora que a conexão e a mídia estão configuradas
-        console.log("Criando oferta...");
-        this.createOffer(); // A chamada aqui está correta
-      })
-      .catch((error) => {
-        console.error('Erro ao capturar a câmera e microfone:', error);
-      });
   }
+
+
+stopMediaStream() {
+
+  const localVideo = document.getElementById('localVideo') as HTMLVideoElement;
+  if (localVideo && localVideo.srcObject) {
+    const stream = localVideo.srcObject as MediaStream;
+    stream.getTracks().forEach((track) => {
+      track.stop(); 
+    });
+    localVideo.srcObject = null;
+  }
+
+  if (this.peerConnection) {
+    this.peerConnection.close();
+    this.peerConnection = null;  
+  }
+
+  const audioElement = document.getElementById('remoteAudio') as HTMLAudioElement;
+  if (audioElement) {
+    audioElement.srcObject = null;
+  }
+}
+
   
   createOffer() {
     if (this.peerConnection) {

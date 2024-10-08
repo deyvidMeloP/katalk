@@ -8,11 +8,12 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    padding-bottom: 15px;
+    gap: 3px;
 }
 
 .box_All_Message{
     display: none;
+   /* width: 30vw!;*/
 }
 
 .box_Title{
@@ -28,7 +29,7 @@
 .box_Title img{
     border-radius: 50%;
     width: 60px;
-    height:60px;    
+    height: 60px;    
     background-color: rebeccapurple;
 }
 
@@ -40,15 +41,33 @@
 
 .message_Box {
     gap: 40px;
-    padding-left: 15px;
-    padding-top: 15px;
-    padding-right: 15px;
     overflow-y: auto;
     display: flex;
     width: 100%;
-    height: 550px;
+    height: 530px;
     flex-direction: column; /* Mantém a ordem normal, de cima para baixo */
     justify-content: start; /* Itens começam no topo */
+  }
+
+  
+.message_Box:hover::-webkit-scrollbar-thumb{
+    background-color: rgb(27, 24, 24);
+    visibility: visible;
+}
+
+.message_Box::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .message_Box::-webkit-scrollbar-thumb{
+    visibility: hidden;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+.message_Box::-webkit-scrollbar-track {
+    background-color: rgb(33, 32, 32);
+    display: none;
   }
   
 
@@ -60,6 +79,19 @@
   
 }
 
+.message_Box_Title{
+    border-bottom: 1px solid #bdd6f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px 10px 15px;
+
+}
+ 
+.message_Box_Title h1{
+    font-size: 26px;
+    font-weight: 600;
+}
 
 .messageChat{
     margin-left: 20px;
@@ -67,34 +99,35 @@
     display: flex;
     min-width: 50px;
     align-items: center;
-    width: max-content;
+    flex-direction: column;
+    max-width: 400px;
     justify-content: center;
     padding: 5px 10px 5px 10px;
-    border-radius: 0px 5px 5px 5px;
-    min-height: 30px;
+    border-radius: 0px 5px 5px 5px; 
     background-color: #F3EBEB;
     position: relative;
     behavior: auto;
 }
 
-.messageChat h1{
+.messageChat h1 {
     font-size: 16px;
     color: black;
     font-weight: 500;
-    display: flex;
-    text-align: center;
+    margin: 0;
+    word-wrap: break-word;
+    max-width: 100%; /* Limita a largura do texto ao tamanho da div */
 }
 
 .topMessage{
     position: absolute;
     left: -2.8px;
-    top: -16px;
+    top: -8px;
 }
 
 .topSendMessage{
     position: absolute;
     display: none;
-    top: -16px;
+    top: -8px;
     right: -2.8px;
 }
 .message_Information{
@@ -131,6 +164,13 @@
     top: 90px;
 }
 
+.send_Message{
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
 .send_Message button{
     border: none;
     background: none;
@@ -142,6 +182,15 @@
     border: none;
     padding-left: 10px;
     color: #F3EBEB;
+}
+
+.send_Message textarea{
+    background-color: #262626;
+    border-radius: 14px;
+    border: none;
+    padding-left: 10px;
+    color: #F3EBEB;
+    resize: none;
 }
 
 .call{

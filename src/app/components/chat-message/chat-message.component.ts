@@ -85,31 +85,10 @@ teste: any[] = []
    
     this.api.getMessage().subscribe(
       (data: any)=>{
-        navigator.serviceWorker.getRegistration().then(function(reg) {
-          if (reg) {
-            console.log('Service worker registrado e ativo', reg);
-          } else {
-            console.log('Service worker não está registrado');
-          }
-        });
-
-        if(localStorage.getItem('ChatOpen')){
-          console.log("auth"+localStorage.getItem('Auth'))
-          console.log("get"+ data.userGet)
-          console.log("chat aberto"+localStorage.getItem('ChatOpen'))
-          console.log("send"+data.userSend)
-        }
-        for(let clear of this.clearMessage){
-          console.log("antes de entrar"+clear.messageChat)
-        }
 
         if(localStorage.getItem('ChatOpen') == data.userSend){
           this.updateMessage(data, data.userSend)
           this.clearMessage.push(data)
-         
-          for(let clear of this.clearMessage){
-            console.log("testando cleardentro"+clear.messageChat)
-          }
           
             setTimeout(() => {   
               const message_Box = document.querySelector(".message_Box") as HTMLElement
@@ -149,6 +128,25 @@ teste: any[] = []
     
   }
   
+  adjustHeight(event: any) {
+  
+    let target = event.target;
+  
+    target.style.height = "auto"; // Redefine a altura 
+    target.style.height = (target.scrollHeight) + "px"; // Ajusta a altura de acordo com o conteúdo 
+
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+   /* if (event.key === 'Enter' && !event.shiftKey) {
+    
+   
+      this.sendMessage()
+      
+    }*/
+  
+  }
+
   displayNotification() {
     const options = {
       body: 'Esta é uma notificação personalizada',
@@ -177,12 +175,26 @@ teste: any[] = []
 
       this.valuesMessage[index].push(data)
       
+      setTimeout(() => {   
+        const message_Box = document.querySelector(".message_Box") as HTMLElement
+        const last = message_Box.lastElementChild as HTMLElement         
+        last.scrollIntoView({ behavior: 'auto' });    
+        last.style.display = "flex"
+        const textArea = document.querySelector(".areaSend") as HTMLElement
+        textArea.style.height = "28px"
+      }, 0);
       return
 
     }
         
     this.keysMessage.push(uid)
     this.valuesMessage.push([data])
+    setTimeout(() => {   
+      const message_Box = document.querySelector(".message_Box") as HTMLElement
+      const last = message_Box.lastElementChild as HTMLElement         
+      last.scrollIntoView({ behavior: 'auto' });    
+      last.style.display = "flex"
+    }, 0);
 
   }
 
@@ -238,11 +250,12 @@ teste: any[] = []
 
       })
 
-      const message_Box = document.querySelector(".message_Box") as HTMLElement
-      const last = message_Box.lastElementChild
-      if(last){
-        last.scrollIntoView({ behavior: 'auto' });  
-      }
+      setTimeout(() => {   
+        const message_Box = document.querySelector(".message_Box") as HTMLElement
+        const last = message_Box.lastElementChild as HTMLElement         
+        last.scrollIntoView({ behavior: 'auto' });    
+        last.style.display = "flex"
+      }, 0);
     
       box_All.style.display = "flex"
     }, 0);

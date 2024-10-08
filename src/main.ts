@@ -7,7 +7,7 @@ import { environment } from './environments/environment';
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
 
-platformBrowserDynamic().bootstrapModule(AppModule)
+/*platformBrowserDynamic().bootstrapModule(AppModule)
   .then(() => {
   if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -15,4 +15,4 @@ platformBrowserDynamic().bootstrapModule(AppModule)
   });
   }
   })
-.catch(err => console.log(err));
+.catch(err => console.log(err));*/
