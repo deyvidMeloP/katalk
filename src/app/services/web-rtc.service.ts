@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 import { ChatEntity } from '../chat-entity.model';
 import { ApiService } from './api.service';
+import { HttpClient } from '@angular/common/http';
 type Offer = {type: String} & {sdp: String}
 
 @Injectable({
@@ -13,9 +14,10 @@ export class WebRTCService {
   public peerConnection: RTCPeerConnection | null = null;
   // Configuração para o STUN server
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private http: HttpClient) {}
 
-  
+  private url =  "http://localhost:8080";
+
   startCall(mode: String) {
     const configuration = {
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
@@ -46,7 +48,6 @@ export class WebRTCService {
         }
 
         else if(this.peerConnection){
-          alert("CHAMADA RECUSADA")
 
           this.stopMediaStream()
     
@@ -67,8 +68,35 @@ export class WebRTCService {
         audioElement.srcObject = remoteStream;
       }
     };
+
+
+    if(mode.includes('audio')){
+      navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+      .then((stream) => {
+        console.log('apenas microfone capturado:', stream);
+        stream.getTracks().forEach((track) => {
+          if (this.peerConnection) {
+            this.peerConnection.addTrack(track, stream);
+          }
+        });
   
-    // Captura a mídia do usuário (áudio e vídeo)
+        // Exibe o vídeo local (para o usuário ver a si mesmo)
+        const localVideo = document.getElementById('localVideo') as HTMLVideoElement;
+        if (localVideo) {
+          localVideo.srcObject = stream;
+        }
+  
+        // Chama o createOffer agora que a conexão e a mídia estão configuradas
+        console.log("Criando oferta...");
+        this.createOffer(); // A chamada aqui está correta
+      })
+      .catch((error) => {
+        console.error('Erro ao capturar a câmera e microfone:', error);
+      });
+
+    }
+
+    else if(mode.includes('video')){
       navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then((stream) => {
           console.log('Câmera e microfone capturados:', stream);
@@ -92,6 +120,10 @@ export class WebRTCService {
           console.error('Erro ao capturar a câmera e microfone:', error);
         });
   
+    }
+  
+    // Captura a mídia do usuário (áudio e vídeo)
+      
   }
 
 
@@ -232,9 +264,6 @@ handleRemoteCandidate(data: any) {
     console.log("Candidato ICE inválido ou conexão peer não estabelecida.");
   }
 }
-
-
-
     // Conecte-se ao servidor de sinalização
     /*
     this.signalingSubject = webSocket('ws://localhost:8081');

@@ -335,8 +335,8 @@ getGroupAllMessage():Observable<any[]>{
 }
 
 getByUser(uid: string):Observable<any>{
-  const url = `chat/GetUser/${uid}`
 
+  const url = `${this.url}/chat/GetUser/${uid}` 
   return this.http.get(url)
 
 
@@ -344,4 +344,23 @@ getByUser(uid: string):Observable<any>{
 
 
 
+cancelCall(cancelCall: any){
+  
+  this.stompService.publish({
+    destination: `/app/cancelCall`,
+    body: JSON.stringify(cancelCall)
+  }) 
+}
+
+answerCancelCall(): Observable<any>{
+ 
+  return this.stompService.watch(`/topic/cancelCall/${localStorage.getItem('sendCall')}`).pipe(
+    map(message => {
+      const body = JSON.parse(message.body)
+      console.log("corpo da mensagem"+ body)
+      return body as any;
+    })
+  )
+  
+}
 }

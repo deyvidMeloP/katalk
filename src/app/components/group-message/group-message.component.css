@@ -13,7 +13,7 @@
     height: 86vh;
     display: flex;
     justify-content: space-between;
-    position: relative;
+    /*position: relative;*/
 }
 .box_Title{
     display: flex;

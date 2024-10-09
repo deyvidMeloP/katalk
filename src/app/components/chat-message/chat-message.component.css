@@ -4,8 +4,8 @@
    background-image: url("https://wallpapers.com/images/hd/dark-samurai-ozptbd1ntlz67j3r.jpg");
    background-position: center;
    background-repeat: no-repeat;
-   background-size: cover;*/
-    position: relative;
+   background-size: cover;
+    position: relative;*/
     display: flex;
     flex-direction: column;
     gap: 3px;

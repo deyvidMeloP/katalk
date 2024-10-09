@@ -4,6 +4,7 @@ import { ApiService } from '../../services/api.service';
 
 
 type Offer = {type: String} & {sdp: String}
+type CancelCall = {status: String} & {uid: String}
 
 @Component({
   selector: 'app-voice-call',
@@ -19,11 +20,17 @@ localStream: MediaStream | null = null;
 remoteStream: MediaStream | null = null;
 candidateA: any
 offerRTC: any;
-answer: any
+answer: any;
+userCall: any;
 offer: Offer = {
   'type': '',
   'sdp': ''
 }
+cancelCall: CancelCall = {
+  'status': '',
+  'uid': ''
+}
+
 nameCall: string = ''
 callReceived: boolean = false
 callAccept: boolean = false
@@ -95,8 +102,26 @@ callAccept: boolean = false
         localStorage.setItem('sendCall', this.offerRTC.call.sendUid)
         localStorage.setItem('getCall', this.offerRTC.call.getUid)
         localStorage.setItem('dateCall', this.offerRTC.call.date)
-        this.nameCall = `${localStorage.getItem('sendCall')}`
+
+        this.api.getByUser(`${localStorage.getItem('sendCall')}`).subscribe(
+          (data: any)=>{
+            this.userCall = data
+            this.nameCall = data.userUsername
+          }
+        )
         this.callReceived = true
+
+        this.api.answerCancelCall().subscribe(
+          (data: CancelCall)=>{
+            console.log("chamada cancelada"+ data.uid)
+            this.callReceived = false
+          },
+          (err: any)=>{
+            console.log("erro ao receber cancelamento de chamada"+ err)
+          }
+        )
+
+
       },
       (err: any)=>{
         console.log("erro ao receber a voiceCall");
@@ -132,6 +157,9 @@ callAccept: boolean = false
           const answer: Offer = {
             'type': data.type,
             'sdp': data.sdp
+          }
+          if(answer.sdp.includes('recusada')){
+            this.callAccept = false
           }
           this.webRTCService.remoteCall(answer)
           console.log('ANSWER RECEBIDA NA HOME:', data);
@@ -214,6 +242,14 @@ callAccept: boolean = false
   }
 
   closeCall(){
+    this.callAccept = false
+    this.cancelCall.status = 'cancelado'
+    this.cancelCall.uid = `${localStorage.getItem('Auth')}`
+    this.api.cancelCall(this.cancelCall)
     this.webRTCService.stopMediaStream()
+  }
+
+  answerCancelCall(){
+    
   }
 }
