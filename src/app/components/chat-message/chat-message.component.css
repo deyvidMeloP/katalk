@@ -51,7 +51,7 @@
 
   
 .message_Box:hover::-webkit-scrollbar-thumb{
-    background-color: rgb(27, 24, 24);
+    background-color: #94afd6;
     visibility: visible;
 }
 
@@ -80,7 +80,6 @@
 }
 
 .message_Box_Title{
-    border-bottom: 1px solid #bdd6f6;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -97,7 +96,7 @@
     margin-left: 20px;
     margin-right: 20px;
     display: flex;
-    min-width: 50px;
+    min-width: 30px;
     align-items: center;
     flex-direction: column;
     max-width: 400px;

@@ -4,6 +4,7 @@ import { ChangeChatService } from '../../services/change-chat.service';
 import { FriendListService } from '../../services/friend-list.service';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { user } from '@angular/fire/auth';
+import { FriendEntity } from '../../newFriend.model';
 
 type GroupMessage = {username: string} & {lastMessage: string} & {uid: string} & {userSend: string} & {userGet: string} & {url: string} 
 
@@ -27,7 +28,10 @@ export class GroupMessageComponent implements OnInit {
   //todos os usuários
   allUser: any[] =[]
 
-  friendList: any[] = []
+  friendObject: any[] = []
+  friendListKey: String[] = []
+  friendListValues: any[] = []
+  friendAll: boolean = false
   //par username e url
   usernameGroup: GroupMessage[] = [] 
   userNames: string[] = []
@@ -44,7 +48,7 @@ export class GroupMessageComponent implements OnInit {
     this.getGroupMessage();
     this.getFriendList()
     this.getMessage()
-
+    this.invitedFriend()
     if(localStorage.getItem('ChatOpen')){
       localStorage.setItem('ChatOpen', '')
     }
@@ -69,9 +73,18 @@ export class GroupMessageComponent implements OnInit {
 
   }
 
+  invitedFriend(){
+    this.friendService.invitedFriend().subscribe(
+      (data: FriendEntity)=>{
 
+        this.friendListKey.push(data.friendUid)
+        this.friendListValues.push(data)
+
+      }
+    )
+  }
  
-    worker(){
+  worker(){
       
         navigator.serviceWorker.getRegistration().then(function(reg) {
           if (reg) {
@@ -82,7 +95,7 @@ export class GroupMessageComponent implements OnInit {
         });
         
   
-    }
+  }
     
   getAllMessage(){
 
@@ -219,8 +232,10 @@ export class GroupMessageComponent implements OnInit {
 
     this.friendService.getFriendList().subscribe(
       (data: any[])=>{
-        this.friendList = data
 
+        this.friendObject = data
+        this.friendListKey = Object.keys(this.friendObject)
+        this.friendListValues = Object.values(this.friendObject)
 
       },
 
@@ -251,11 +266,10 @@ teste(){
   async showMenu(){
     const icon = document.querySelectorAll(".menuCircle span") as NodeListOf<HTMLElement>
     const menuButton = document.querySelector(".menu_Button") as HTMLElement
-    const menuClose = document.querySelector(".menu_Close") as HTMLElement
+    
     if(this.toggle){    
-      menuButton.style.display = "none"
-      menuClose.style.visibility = "visible"
-      menuClose.classList.add('translateIcon')
+      menuButton.classList.add('menuClose')
+      menuButton.classList.add('translateIcon')
 
       await icon.forEach((el)=>{
         el.style.visibility = "visible"
@@ -280,10 +294,8 @@ teste(){
 
     else{
 
-     await menuClose.classList.remove('translateIcon')
-      menuButton.style.display = "block"
-      menuClose.style.visibility = "hidden"
-      
+     await menuButton.classList.remove('translateIcon')
+     await menuButton.classList.remove('menuClose')
       let cont = 0
       for(let i = 0; i < icon.length; i++){
       
@@ -304,7 +316,7 @@ teste(){
 }
 
 clickCloseMenu(){
-  const menuClose = document.querySelector(".menu_Close") as HTMLElement
+  const menuClose = document.querySelector(".menuClose") as HTMLElement
  
   if(menuClose && menuClose.classList.contains('translateIcon')){
     this.showMenu()  
@@ -343,6 +355,12 @@ showFriendList(){
   this.showMenu()
   const friendAll = document.querySelector(".friendAll") as HTMLElement
   friendAll.style.display = "block"
+
+  this.showMenu()
+
+  friendAll.classList.add('transition')
+  
+
 
 
 }

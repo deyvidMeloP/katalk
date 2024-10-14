@@ -111,72 +111,29 @@ export class HomeComponent implements OnInit {
     }
       */
   })
-
-
-  }
-
-
- /* async startCall() {
-   
-    const local = await this.webRTCService.initCall();
-
-    if(local){
-      this.localStream = local
+  // Verifica se o navegador suporta notificações
+  if ("Notification" in window) {
+    // Verifica o status da permissão
+    if (Notification.permission === "granted") {
+      // Se a permissão já foi concedida, pode exibir a notificação
+      new Notification("Permissão já concedida. Esta é a notificação!");
+    } else if (Notification.permission === "denied" || Notification.permission === "default") {
+      // Caso contrário, pede permissão
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          new Notification("Permissão concedida! Esta é a notificação.");
+        } else {
+          console.log("Permissão negada ou ignorada.");
+        }
+      });
     }
-    const offer = await this.webRTCService.createOffer();
-
-    this.api.sendInviteCall(offer)
-    // Enviar a oferta para outro peer via servidor de sinalização (não implementado aqui)
-    console.log('Oferta criada:', offer);
-  }*/
-
-  /*getVoiceCall(){
-    this.api.getvoiceCall().subscribe(
-      (data: any)=>{
-
-      
-
-          console.log('Offer received:', data);
-          this.answerCall(data); // Processa a oferta recebida
-
-        
-
-      },
-      (err: any)=>{
-        console.log("erro ao receber a voiceCall");
-      }
-    )
-  }*/
-
-    // Responde à oferta
-    /*async answerCall(offer: RTCSessionDescriptionInit) {
-      const answer = await this.webRTCService.handleOffer(offer);
-      // Enviar a resposta de volta para o peer que enviou a oferta
-      this.api.sendAnswer(answer); 
-      console.log('Resposta enviada:', answer);
-  
-    }*/
-
-  /*getAnswerCall(){
-    this.api.getAnswerCall().subscribe(
-      (data: any)=>{
-      
-          console.log('ANSWER received IN home:', data);
-          this.handleAnswer(data); // Processa a oferta recebida
-        
-       
-      },
-      (err: any)=>{
-        console.log("erro ao receber a voiceCall");
-      }
-    )
+  } else {
+    console.log("Este navegador não suporta notificações.");
   }
-  
 
-  // Lidar com a resposta recebida do peer
-  async handleAnswer(answer: RTCSessionDescriptionInit) {
-    await this.webRTCService.handleAnswer(answer);
-  }*/
+
+  }
+
   getAllMessage(){
 
     this.api.getAllMessage().subscribe(
@@ -227,34 +184,6 @@ export class HomeComponent implements OnInit {
   }
 
   getOtherMessage(){
- /*   this.api.getNotifications().subscribe(
-      (data: any)=>{
-        const auth = getAuth();
-        const uidUser = auth.currentUser;
-   
-        if(uidUser?.uid == data.userGet){
-
-          this.allMessage.push(data)
-        
-          const lastUser =  this.userAll.filter((el)=>{
-          
-            return el.userUid == data.userSend
-         
-          })
-
-          this.lastUser = lastUser[0]
-                 
-          if(!this.verifyChat()){
-            this.addBoxChat()
-          }
-        }
-        
-      },
-
-      (error: any) => {
-        console.log("erro ao receber a mensagem")
-      }
-    )*/
   }
 
 
