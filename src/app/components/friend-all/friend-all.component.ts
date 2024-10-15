@@ -135,12 +135,13 @@ export class FriendAllComponent implements OnInit{
 
           pos = this.uidUser.indexOf(el.friendUid)
            // {username: String} & {userUid: String} & {friendUid: String}& {friendStatus: String}& {friendDate: String}
-           
+
           }
 
         else{
 
           pos = this.uidUser.indexOf(el.userUid)
+        
         }
     
         if(el.friendStatus.includes('pendente')){
@@ -189,6 +190,27 @@ export class FriendAllComponent implements OnInit{
 
         this.friendKeys.push(data.userUid)
         this.friendsValues.push(data)
+
+        let friend: friendList = {
+          username: '',
+          userUid: '',
+          friendUid: '',
+          friendDate: '',
+          friendStatus: ''
+        };
+
+       const user: any = this.api.getByUser(data.userUid).subscribe()
+      
+       friend.username = user.userUsername
+       friend.userUid = data.userUid
+       friend.friendUid = `${localStorage.getItem('Auth')}`
+       friend.friendDate = data.friendDate
+       friend.friendStatus = data.friendStatus
+
+       this.listPending.push(friend)
+
+       alert(friend.username)
+       
         new Notification("Pedido de amizade recebido de: "+ data.userUid , { icon: "https://cdn-icons-png.flaticon.com/512/456/456212.png" })
 
       }
@@ -198,37 +220,41 @@ export class FriendAllComponent implements OnInit{
   userSearch(){
  
     const word = this.textSearch.toLocaleLowerCase()
- 
-    if(this.usernames.includes(word) && localStorage.getItem('Username') != word){
-  
-      const index = this.usernames.indexOf(word)
-  
-      this.user = this.userValues[index]
-
-      const indexFriend = this.friendKeys.indexOf(this.user.userUid)
-
     
-      if(this.friendsValues[indexFriend] && (this.friendsValues[indexFriend].friendStatus == "aceito" || this.friendsValues[indexFriend].friendStatus == "pendente")){
-        
-        this.addStatus = "added"
-
-        return;
+    if(word != ""){
+      
+      const friendItem = document.querySelector(".friend_Item")  as HTMLElement
+      if(this.usernames.includes(word) && localStorage.getItem('Username') != word){
+    
+        const index = this.usernames.indexOf(word)
+    
+        this.user = this.userValues[index]
+  
+        const indexFriend = this.friendKeys.indexOf(this.user.userUid)
+  
+       friendItem.style.transform = "translateX(0px)"
+        if(this.friendsValues[indexFriend] && (this.friendsValues[indexFriend].friendStatus == "aceito" || this.friendsValues[indexFriend].friendStatus == "pendente")){
+          
+          this.addStatus = "added"
+  
+          return;
+        }
+  
+        else if(this.friendsValues[0] && this.friendsValues[0].friendStatus == "negado"){
+  
+  
+          return;
+        }
+       this.addStatus = "newFriend"
+  
+  
+      }
+      else{
+      
+        alert("usuário não encontrado")
+  
       }
 
-      else if(this.friendsValues[0] && this.friendsValues[0].friendStatus == "negado"){
-
-
-        return;
-      }
-     this.addStatus = "newFriend"
-      
-      
-
-
-    }
-    else{
-    
-      alert("usuário não encontrado")
     }
     
 
@@ -264,15 +290,27 @@ export class FriendAllComponent implements OnInit{
     const searchFriend = document.querySelector(".search_Friend") as HTMLElement
     const friendItem = document.querySelector(".friend_Item") as HTMLElement
     const friendList = document.querySelector(".friend_List") as HTMLElement
+    const button = friendList.querySelector('button') as HTMLElement
+    const buttonsCategories = document.querySelector(".buttons_Categories") as HTMLElement
+    
     if(!this.toggleList){
 
       searchFriend.style.transform = "translateX(300px)"
       if(friendItem)
       friendItem.style.transform = "translateX(300px)"
-  
+      
+    
       setTimeout(() => {
         friendList.style.top = "20px"
       }, 100);
+      
+      setTimeout(() => {
+        buttonsCategories.style.right = "-230px"
+      }, 300);
+     
+      button.innerText = "Fechar lista de amigos"
+
+
     }
 
     else if(this.toggleList){
@@ -281,14 +319,53 @@ export class FriendAllComponent implements OnInit{
 
      setTimeout(() => {
       searchFriend.style.transform = "translateX(0px)"
-      if(friendItem)
-      friendItem.style.transform = "translateX(0px)"
-     }, 50);
+      
+      if(this.user.userUsername != undefined){
+          friendItem.style.transform = "translateX(0px)"
+      }
 
+     }, 50);
+     setTimeout(() => {
+      buttonsCategories.style.right = "-300px"
+    }, 100);
+   
+     button.innerText = "Ver lista de amigos"
     }
     
     this.toggleList = !this.toggleList
     this.friendListShow = !this.friendListShow
 
+  }
+
+
+  listCategories(option: String){
+
+    //Falta criar um put para mudar o estado de pending para accept no banco
+    const listAccept = document.querySelector('.accept') as HTMLElement
+    const listRefuse = document.querySelector('.refuse') as HTMLElement
+    const listPending = document.querySelector('.pending') as HTMLElement
+
+    const listMargin = document.querySelectorAll('.item_List_All') as NodeListOf<HTMLElement>
+
+    listMargin.forEach((el)=>{
+      el.style.display = "none"
+    })
+
+    if(option == "accept"){
+
+      listAccept.style.display = 'flex'
+      
+    }
+
+    else if(option == "pending"){
+
+      listPending.style.display = 'flex'
+   
+    }
+
+    else if(option == "refuse"){
+      listRefuse.style.display = 'flex'
+    }
+    
   }
 }

@@ -1,5 +1,5 @@
 
-.buttonList, .buttonAdd, .friend_List button{
+.buttonList, .buttonAdd, .friend_List button:first-child{
     padding: 12px;
     border: none;
     background-color: #F3EBEB;
@@ -66,6 +66,7 @@
     align-items: center;
     padding-right: 8px;
     transition: 0.3s ease all;
+    transform: translateX(280px);
 }
 
 .friend_Item img{
@@ -106,7 +107,97 @@
     align-items: center;
 }
 
-.friend_List button{
+.friend_List button:first-child{
     padding: 10px;
     width: max-content;
+}
+
+.buttons_Categories{
+    display: flex;
+    width: max-content;
+    position: absolute;
+    transition: 0.5s ease right;
+    transform: rotate(-90deg);
+    right: -300px;
+    top: 370px;
+    gap: 40px;
+}
+
+.list_Margin{
+    border: none;
+  /* max-width: 180px;*/
+    width: max-content;
+    height: 34px;
+    padding: 5px 10px 5px 10px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 10px 10px 0px 0px;
+    transition: 0.2s ease background-color;
+
+/*transform: rotate(-90deg);
+    width: 200px;
+    margin-bottom: 100px;
+    right: -100px;*/
+}
+
+.list_Margin:hover{
+    background-color:#aac9f5;
+    color: white;
+}
+
+.item_List_All{
+    margin: 20px 36px 0px 0px;
+    display: none;
+    align-items: center;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+}
+
+.list_Title{
+    font-size: 20px!important;
+    color: black;
+}
+.item_List_All h1{
+    font-size: 16px;
+    font-weight: 500;
+
+}
+.list_Item{
+   display: flex;
+   align-items: center;
+   flex-direction: column;
+   margin-top: 20px;
+   border: solid 1px #F3EBEB;
+   border-radius: 10px;
+}
+
+.list_Item:not(:last-child){
+    margin-bottom: 10px;
+}
+
+.optionFriend{
+    display: flex; 
+    justify-content: center; 
+    gap: 10px;
+}
+
+.optionFriend span{
+    cursor: pointer; 
+    border: 1px solid white; 
+    padding: 3px;
+}
+
+.optionFriend span:first-child:hover{
+    background-color: rgb(29, 93, 29);
+}
+
+.optionFriend span:last-child:hover{
+    background-color: rgb(164, 18, 18);
+}
+
+@media screen and (max-height: 680px){
+    .list_Margin{
+        font-size: 12px;
+    }
 }

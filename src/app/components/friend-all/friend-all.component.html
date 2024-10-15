@@ -19,7 +19,7 @@
 
         </div>
         
-        <div class="friend_Item" *ngIf="this.user.userUsername" >
+        <div class="friend_Item">
 
             <img src="https://cdn-icons-png.flaticon.com/512/456/456212.png" alt="">
                 
@@ -36,18 +36,123 @@
                
             <button (click)="showFriendList()">Ver lista de amigos</button>
 
-            <ul *ngIf="this.friendListShow" class="item_List_All">
+           <!---<span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 448 512" fill="#f3ebeb"><!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.<path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>
+            </span>
+            -->
 
-                <li *ngFor="let list of this.listPending">
+            <ul class="item_List_All">
+
+             <!---   <li *ngFor="let list of this.listPending">
 
                     <p>name: {{list.username}}</p>
                     <p>status: {{list.friendStatus}}</p>
                     <p>data: {{list.friendDate}}</p>
                 </li>
+-->
+            </ul>
+
+            <ul *ngIf="this.friendListShow" class="item_List_All pending">
+
+                <h1 class="list_Title">Solicitações Pendentes</h1>
+                
+                <span *ngIf="this.listPending.length == 1">Você tem {{this.listPending.length}} solicitação pendente </span>
+                <span *ngIf="this.listPending.length > 1">Você tem {{this.listPending.length}} solicitações pendentes </span>
+
+                <li *ngFor="let list of this.listPending" class="list_Item">
+            
+                    <h1>{{list.username}}</h1>
+
+                    <div class="item_User" style="padding: 5px;">
+
+                        <h1>Enviada em {{list.friendDate}}</h1>
+                        
+                        <div class="optionFriend">
+
+                            <span>Aceitar</span>
+                            <span>Recusar</span>
+
+                        </div>
+                    
+                    </div>
+
+                </li>
+               
+                <li *ngIf="this.listPending.length == 0">
+                    Sem pedidos pendentes
+                </li>
+
+            </ul>
+
+            <ul *ngIf="this.friendListShow" class="item_List_All accept">
+
+                <h1 class="list_Title">Amigos</h1>
+
+                <span *ngIf="this.listAccept.length == 1">Você tem {{this.listPending.length}} amigo</span>
+                <span *ngIf="this.listAccept.length > 1">Você tem {{this.listPending.length}} amigos </span>
+
+                <li *ngFor="let list of this.listAccept" class="list_Item">
+                    
+                    <h1>{{list.username}}</h1>
+                    
+                    <div class="item_User" style="padding: 5px;">
+
+                        <h1>Pedido enviado em {{list.friendDate}}</h1>
+                    
+                    </div>
+
+                </li>
+               
+                <li *ngIf="this.listAccept.length == 0">
+                    Sem amizades
+                </li>
+
+            </ul>
+
+            <ul *ngIf="this.friendListShow" class="item_List_All refuse">
+
+                <h1 class="list_Title">Solicitações recusadas</h1>
+                
+                <span *ngIf="this.listAccept.length == 1">Você tem {{this.listRefuse.length}} solicitação recusado</span>
+                <span *ngIf="this.listAccept.length > 1">Você tem {{this.listRefuse.length}} solicitações recusados </span>
+       
+                <li *ngFor="let list of this.listRefuse" class="list_Item">
+                    
+                    <h1>{{list.username}}</h1>
+                    
+                    <div class="item_User" style="padding: 5px;">
+
+                        <h1>Pedido enviado em {{list.friendDate}}</h1>
+                    
+                    </div>
+
+                </li>
+
+                
+                <li *ngIf="this.listRefuse.length == 0">
+                    Sem pedidos recusados
+                </li>
 
             </ul>
    
         </div>
+
+        <div class="buttons_Categories">
+
+            <button class="list_Margin listAcceptTransition" (click)="listCategories('accept')">
+                Amizades
+            </button>
+    
+            <button class="list_Margin listPendingTransition" (click)="listCategories('pending')">
+                Solicitações pendentes
+            </button>
+    
+            <button class="list_Margin listRefuseTransition" (click)="listCategories('refuse')">
+                Solicitações recusadas
+            </button>
+
+        </div>
+       
         
     </div>
 
