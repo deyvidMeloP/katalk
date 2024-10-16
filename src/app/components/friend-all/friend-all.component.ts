@@ -50,7 +50,8 @@ export class FriendAllComponent implements OnInit{
   searchFriend(){
     const searchBar = document.querySelector(".searchBar") as HTMLElement
     const buttonAdd = document.querySelector(".buttonAdd") as HTMLElement
-    
+    const friendItem = document.querySelector(".friend_Item")  as HTMLElement
+
     if(!this.toggleAdd){
       buttonAdd.textContent = 'Enviar pedido de amizade'
       buttonAdd.style.width = "max-content"
@@ -63,6 +64,9 @@ export class FriendAllComponent implements OnInit{
       buttonAdd.style.width = '139px'
       buttonAdd.style.padding = "12px"
       searchBar.style.transform = "translateX(280px)"
+      friendItem.style.transform = "translateX(280px)"
+      this.textSearch = ""
+      this.user = ""
     }
     
    
@@ -144,12 +148,12 @@ export class FriendAllComponent implements OnInit{
         
         }
     
-        if(el.friendStatus.includes('pendente')){
+        if(el.friendStatus.includes('pending')){
 
           friend.username = this.userValues[pos].userUsername
-          friend.userUid = this.userValues[pos].userUid   
-          friend.friendUid = this.userValues[pos].friendUid
-          friend.friendStatus = "pendente"
+          friend.userUid = el.userUid   
+          friend.friendUid = el.friendUid
+          friend.friendStatus = "pending"
           friend.friendDate = el.friendDate
 
           this.listPending.push(friend)
@@ -157,24 +161,24 @@ export class FriendAllComponent implements OnInit{
 
         }
 
-        else if(el.friendStatus.includes('aceitado')){
+        else if(el.friendStatus.includes('accepted')){
           
           friend.username = this.userValues[pos].userUsername
-          friend.userUid = this.userValues[pos].userUid   
-          friend.friendUid = this.userValues[pos].friendUid
-          friend.friendStatus = "aceitado"
+          friend.userUid = el.userUid   
+          friend.friendUid = el.friendUid
+          friend.friendStatus = "accepted"
           friend.friendDate = el.friendDate
           this.listAccept.push(friend)
           
 
         }
 
-        else if(el.friendStatus.includes('negado')){
+        else if(el.friendStatus.includes('refused')){
 
           friend.username = this.userValues[pos].userUsername
-          friend.userUid = this.userValues[pos].userUid   
-          friend.friendUid = this.userValues[pos].friendUid
-          friend.friendStatus = "negado"
+          friend.userUid = el.userUid   
+          friend.friendUid = el.friendUid
+          friend.friendStatus = "refused"
           friend.friendDate = el.friendDate
 
           this.listRefuse.push(friend)
@@ -208,9 +212,10 @@ export class FriendAllComponent implements OnInit{
        friend.friendStatus = data.friendStatus
 
        this.listPending.push(friend)
+       this.friendKeys.push(friend.userUid)
+       this.friendsValues.push(data)
+       this.friendService.setKeyValue(this.friendKeys, this.friendsValues)
 
-       alert(friend.username)
-       
         new Notification("Pedido de amizade recebido de: "+ data.userUid , { icon: "https://cdn-icons-png.flaticon.com/512/456/456212.png" })
 
       }
@@ -219,8 +224,8 @@ export class FriendAllComponent implements OnInit{
  
   userSearch(){
  
-    const word = this.textSearch.toLocaleLowerCase()
-    
+    let word = this.textSearch.toLocaleLowerCase()
+    console.log(word)
     if(word != ""){
       
       const friendItem = document.querySelector(".friend_Item")  as HTMLElement
@@ -233,27 +238,27 @@ export class FriendAllComponent implements OnInit{
         const indexFriend = this.friendKeys.indexOf(this.user.userUid)
   
        friendItem.style.transform = "translateX(0px)"
-        if(this.friendsValues[indexFriend] && (this.friendsValues[indexFriend].friendStatus == "aceito" || this.friendsValues[indexFriend].friendStatus == "pendente")){
+       
+        if(this.friendsValues[indexFriend] && (this.friendsValues[indexFriend].friendStatus == "accepted" || this.friendsValues[indexFriend].friendStatus == "pending")){
           
           this.addStatus = "added"
-  
           return;
         }
   
-        else if(this.friendsValues[0] && this.friendsValues[0].friendStatus == "negado"){
+        else if(this.friendsValues[0] && this.friendsValues[0].friendStatus == "refused"){
   
-  
+            this.textSearch = ""
           return;
         }
        this.addStatus = "newFriend"
-  
   
       }
       else{
       
         alert("usuário não encontrado")
-  
+
       }
+
 
     }
     
@@ -274,7 +279,7 @@ export class FriendAllComponent implements OnInit{
    
     this.friendEntity.userUid = `${localStorage.getItem('Auth')}`
     this.friendEntity.friendUid = this.user.userUid
-    this.friendEntity.friendStatus = "pendente"
+    this.friendEntity.friendStatus = "pending"
     this.friendEntity.friendDate = dateFormat
 
     
@@ -282,8 +287,95 @@ export class FriendAllComponent implements OnInit{
 
   }
 
-  getFriends(){
+  manageRequest(friend:friendList, option: String){
+    
+    let newFriend: FriendEntity ={
+      userUid: '',
+      friendUid: '',
+      friendStatus: '',
+      friendDate: ''
+    }
 
+    const dateString: any = new Date().toLocaleDateString()
+    const dateHours: any = new Date().toLocaleTimeString()
+     
+    const year = `${dateString[6]}${dateString[7]}${dateString[8]}${dateString[9]}`
+    const month =  `${dateString[3]}${dateString[4]}`
+    const day = `${dateString[0]}${dateString[1]}`
+  
+    let format: string = `${year}-${month}-${day}`
+     
+    const dateFormat: string = `${format}T${dateHours}`
+
+    newFriend.userUid = friend.userUid
+    newFriend.friendUid = friend.friendUid
+
+    newFriend.friendDate = dateFormat
+
+    if(option == "accept"){
+
+      console.log(newFriend.userUid +"user")
+      console.log(newFriend.friendUid +"friend")
+
+      newFriend.friendStatus = "accepted"
+      this.friendService.changeRequest(newFriend).subscribe()
+
+      let aux: friendList[]
+    
+      aux = this.listPending.filter((el)=>{
+          
+        return el != friend
+  
+      })
+
+      this.listPending = [...aux]
+
+      friend.friendStatus = "accepted"
+      friend.friendDate = dateFormat
+      this.listAccept.unshift(friend)
+
+    }
+
+    else if(option == "refuse"){
+
+      newFriend.friendStatus = "refused"
+      this.friendService.changeRequest(newFriend)
+
+      let aux: friendList[]
+    
+      aux = this.listPending.filter((el)=>{
+          
+        return el != friend
+  
+      })
+
+      this.listPending = [...aux]
+
+      friend.friendStatus = "refused"
+      friend.friendDate = dateFormat
+      this.listRefuse.unshift(friend)
+
+
+    }
+    //
+    let pos = -1
+
+    if(friend.userUid != localStorage.getItem('Auth')){
+
+      pos = this.friendKeys.indexOf(friend.userUid)
+
+    }
+
+    else if(friend.friendUid != localStorage.getItem('Auth')){
+      pos = this.friendKeys.indexOf(friend.friendUid)
+    }
+
+    this.friendsValues[pos].friendStatus = friend.friendStatus
+    this.friendsValues[pos].friendDate = friend.friendDate
+
+
+    this.friendService.setKeyValue(this.friendKeys, this.friendsValues)
+  
   }
 
   showFriendList(){

@@ -6,6 +6,7 @@
     flex-direction: column;
     gap: 10px;
     position: relative;
+    overflow: hidden;
 }
 
 .box_Message{
@@ -14,7 +15,7 @@
     height: 86vh;
     display: flex;
     justify-content: space-between;
-    /*position: relative;*/
+    position: relative;
 }
 .box_Title{
     display: flex;
@@ -172,7 +173,7 @@
     position: absolute;
     top: 0;
     right: -280vw;
-    right: 0;
+    overflow: hidden;
 }
 
 .transition{

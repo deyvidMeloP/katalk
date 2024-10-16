@@ -371,6 +371,10 @@ groupSubscribe(){
 
 addNewGroup(){
 
+ /*const teste: any[] = this.friendValues.filter(el => el.friendStatus == "accepted")
+ alert(teste[0].friendDate)*/
+ //FILTRA E PEGA TODOS OS ACCEPTED, BOM CRIAR UMA VARIAVEL GLOBAL PRA ISSO E DEPOIS ITERA ELA 
+  
   this.friendValues.forEach((key)=>{
 
  if (!this.usernameGroup.some(group=>  group.uid.includes(key.friendUid))){
@@ -415,7 +419,6 @@ addNewGroup(){
               "userSend": userSend,
               "userGet": userGet,
               "url": "null"*/
-
   
 }
 

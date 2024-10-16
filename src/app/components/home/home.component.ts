@@ -116,12 +116,10 @@ export class HomeComponent implements OnInit {
     // Verifica o status da permissão
     if (Notification.permission === "granted") {
       // Se a permissão já foi concedida, pode exibir a notificação
-      new Notification("Permissão já concedida. Esta é a notificação!");
     } else if (Notification.permission === "denied" || Notification.permission === "default") {
       // Caso contrário, pede permissão
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
-          new Notification("Permissão concedida! Esta é a notificação.");
         } else {
           console.log("Permissão negada ou ignorada.");
         }

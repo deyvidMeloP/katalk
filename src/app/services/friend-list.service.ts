@@ -48,6 +48,13 @@ export class FriendListService {
     )
   }
 
+  changeRequest(friend: FriendEntity): Observable<any>{
+
+    const url = `${this.url}/katalk/changeRequest`
+    return this.http.put(url, friend).pipe()
+    
+  }
+
   /*friendSortList(): Observable <any[]>{
     
     const url = `${this.url}/katalk/FriendSortList/${localStorage.getItem("Auth")}` 
