@@ -5,6 +5,7 @@ import { FriendListService } from '../../services/friend-list.service';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { user } from '@angular/fire/auth';
 import { FriendEntity } from '../../newFriend.model';
+import { group } from '@angular/animations';
 
 type GroupMessage = {username: string} & {lastMessage: string} & {uid: string} & {userSend: string} & {userGet: string} & {url: string} 
 
@@ -39,6 +40,8 @@ export class GroupMessageComponent implements OnInit {
   friendValues: any[] = []
   friendGroup: any[] = []
 
+  listAccept: any[] = []
+
   addGroupFilter: GroupMessage[] = []
   word: string = 'olá meu nome'
   toggle: boolean = true
@@ -71,6 +74,17 @@ export class GroupMessageComponent implements OnInit {
     
     })
 
+    this.chat.currentFriendList.subscribe((data: any)=>{
+      const friendAll = document.querySelector(".friendAll") as HTMLElement
+        
+      if(friendAll && data){
+            friendAll.style.right = '-300px'
+      }
+       
+        
+      }
+    )
+    
   }
 
   invitedFriend(){
@@ -317,10 +331,14 @@ teste(){
 
 clickCloseMenu(){
   const menuClose = document.querySelector(".menuClose") as HTMLElement
- 
+  const acceptList = document.querySelector(".acceptList") as HTMLElement
+  const friendAll = document.querySelector(".friendAll") as HTMLElement
+
   if(menuClose && menuClose.classList.contains('translateIcon')){
     this.showMenu()  
+    acceptList.style.display = 'none'
   }
+
 }
 
 async closeMenu(){
@@ -368,13 +386,86 @@ showFriendList(){
 groupSubscribe(){
   
 }
+addNewGroup(listAccept: any){
 
-addNewGroup(){
+  let uid;
 
- /*const teste: any[] = this.friendValues.filter(el => el.friendStatus == "accepted")
- alert(teste[0].friendDate)*/
- //FILTRA E PEGA TODOS OS ACCEPTED, BOM CRIAR UMA VARIAVEL GLOBAL PRA ISSO E DEPOIS ITERA ELA 
+  if(!listAccept.userUid.includes(localStorage.getItem('Auth'))){
+
+    uid = listAccept.useruid
+  }
+  else{
+    uid = listAccept.friendUid
+  }
+  if(!this.usernameGroup.some(group=> group.uid.includes(uid))){
+    const group = {
+      "username": listAccept.username,
+      "lastMessage": '',
+      "uid": uid,
+      "userSend": localStorage.getItem('Auth') || "",
+      "userGet": uid,
+      "url": "null"
+    }
   
+    const messageGroup = {
+      "userSend": localStorage.getItem('Auth') || "",
+      "messageChat": '',
+      "userGet": uid,
+      "dateChat": ''
+  
+     }
+  
+    this.addGroupFilter.push(group)
+    this.usernameGroup.unshift(group)
+    this.groupKeys.unshift(uid)
+    this.groupMessage.unshift(messageGroup)
+  }
+
+  /*this.listAccept.forEach((key)=>{
+
+    if (!this.usernameGroup.some(group=>  group.uid.includes(key.friendUid))){
+   
+     //refazer isso, criar uma linkedlist com username e Uid
+   
+     const user = this.allUser.filter(el => el.userUid == key.friendUid)
+     const username = user[0].userUsername
+     
+     const group = {
+       "username": username,
+       "lastMessage": '',
+       "uid": key.friendUid,
+       "userSend": key.userUid,
+       "userGet": key.friendUid,
+       "url": "null"
+     }
+   
+     const messageGroup = {
+                
+       "idChat": user[0].userId,
+       "userSend": key.userUid,
+       "messageChat": '',
+       "userGet": key.friendUid,
+       "dateChat": ''
+   
+      }
+   
+     this.addGroupFilter.push(group)
+     this.usernameGroup.unshift(group)
+     this.groupKeys.unshift(key.friendUid)
+     this.groupMessage.unshift(messageGroup)
+    }
+   
+     })*/
+
+}
+
+openList(){
+
+ this.listAccept = this.friendValues.filter(el => el.friendStatus == "accepted")
+ const acceptList = document.querySelector(".acceptList") as HTMLElement
+ acceptList.style.display = 'flex'
+ //FILTRA E PEGA TODOS OS ACCEPTED, BOM CRIAR UMA VARIAVEL GLOBAL PRA ISSO E DEPOIS ITERA ELA 
+  /*
   this.friendValues.forEach((key)=>{
 
  if (!this.usernameGroup.some(group=>  group.uid.includes(key.friendUid))){
@@ -410,8 +501,7 @@ addNewGroup(){
  }
 
 
-
-  })
+  })*/
 
   /* "username": el.userUsername,
               "lastMessage": lastMessage,
@@ -422,5 +512,20 @@ addNewGroup(){
   
 }
 
+closeFriendList(){
+/*
+
+  const friendAll = document.querySelector(".friendAll") as HTMLElement
+
+ const right =  window.getComputedStyle(friendAll).right
+
+ const [number, space] = right.split("px")
+
+ const teste = Number(number)
+
+ if(teste >= 0){
+  friendAll.style.right = "-280vw"
+ }*/
+}
 
 }

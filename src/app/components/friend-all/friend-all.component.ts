@@ -2,6 +2,7 @@ import { OnInit ,Component, Renderer2 } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { FriendListService } from '../../services/friend-list.service';
 import { FriendEntity } from '../../newFriend.model';
+import { ChangeChatService } from '../../services/change-chat.service';
 
 type friendList = {username: String} & {userUid: String} & {friendUid: String}& {friendStatus: String}& {friendDate: String}
 
@@ -12,7 +13,7 @@ type friendList = {username: String} & {userUid: String} & {friendUid: String}& 
 })
 
 export class FriendAllComponent implements OnInit{
-  constructor(private api: ApiService, private friendService: FriendListService, private renderer: Renderer2){
+  constructor(private api: ApiService, private friendService: FriendListService, private renderer: Renderer2, private chat: ChangeChatService){
     this.getUserSort()
   }
 
@@ -29,6 +30,7 @@ export class FriendAllComponent implements OnInit{
   listRefuse: friendList[] = []
   listAccept: friendList[] = []
 
+  stateFriend: number = 0
   friendListShow: boolean = false
   username: any = []
   user: any = []
@@ -109,7 +111,6 @@ export class FriendAllComponent implements OnInit{
         this.friendsObject = data
         this.friendKeys = Object.keys(this.friendsObject)
         this.friendsValues = Object.values(this.friendsObject)
-        this.friendService.setKeyValue(this.friendKeys, this.friendsValues)
 
         this.sortFriendList()
       },
@@ -185,6 +186,8 @@ export class FriendAllComponent implements OnInit{
         }
 
       })
+
+      this.friendService.setKeyValue(this.listAccept)
   }
 
   
@@ -214,7 +217,6 @@ export class FriendAllComponent implements OnInit{
        this.listPending.push(friend)
        this.friendKeys.push(friend.userUid)
        this.friendsValues.push(data)
-       this.friendService.setKeyValue(this.friendKeys, this.friendsValues)
 
         new Notification("Pedido de amizade recebido de: "+ data.userUid , { icon: "https://cdn-icons-png.flaticon.com/512/456/456212.png" })
 
@@ -374,7 +376,7 @@ export class FriendAllComponent implements OnInit{
     this.friendsValues[pos].friendDate = friend.friendDate
 
 
-    this.friendService.setKeyValue(this.friendKeys, this.friendsValues)
+    this.friendService.setKeyValue(this.listAccept)
   
   }
 
@@ -459,5 +461,12 @@ export class FriendAllComponent implements OnInit{
       listRefuse.style.display = 'flex'
     }
     
+  }
+
+  closeFriendBox(){
+   this.stateFriend = this.stateFriend + 1
+    this.chat.changeFriendList(this.stateFriend);
+
+   
   }
 }

@@ -31,10 +31,48 @@
             
             </span>
             
-            <span (click)="addNewGroup()">
+            <span>
                 
-                <svg class="iconMenu" width = "20px" height="20px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" fill="white" /></svg>
-         
+                <div (click)="openList()">
+
+                    <svg style="position: relative;" class="iconMenu" width = "20px" height="20px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" fill="white" /></svg>
+                                    
+                </div>
+
+                <ul class="acceptList">
+                    
+                    <li *ngFor="let list of this.listAccept">
+
+                        <h1>{{list.username}}</h1>
+                        <p (click)="addNewGroup(list)">+</p>
+                    
+                    </li>
+
+                    <li *ngFor="let list of this.listAccept">
+
+                        <h1>{{list.username}}</h1>
+                        <p (click)="addNewGroup(list)">+</p>
+                    </li>
+                    <li *ngFor="let list of this.listAccept">
+
+                        <h1>{{list.username}}</h1>
+                        <p (click)="addNewGroup(list)">+</p>
+                    
+                    </li>
+                    <li *ngFor="let list of this.listAccept">
+
+                        <h1>{{list.username}}</h1>
+                        <p (click)="addNewGroup(list)">+</p>
+                    
+                    </li>
+                    <li *ngFor="let list of this.listAccept">
+
+                        <h1>{{list.username}}</h1>
+                         <p (click)="addNewGroup(list)">+</p>
+                    
+                    </li>
+
+                </ul>
             </span>
            
             <span (click)="showFriendList()">
@@ -267,7 +305,8 @@
       
     </div>
 
-    <app-friend-all class="friendAll"></app-friend-all>
+    <app-friend-all class="friendAll"> </app-friend-all>
+
 </div>
 
 <div *ngIf="this.addGroupFilter.length > 0">

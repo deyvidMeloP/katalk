@@ -148,7 +148,7 @@
     padding: 2px;
 }
 
-.menuCircle span{
+.menuCircle span:not(:nth-child(4)){
     display: flex;
     position: absolute;
     align-items: center;
@@ -164,6 +164,30 @@
     transition: 0.3s all ease;
 }
 
+.menuCircle span:nth-child(4){
+    display: flex;
+    position: absolute;
+ /*   align-items: center;
+    justify-content: center;
+    background-color: #174774;
+    padding: 10px;
+    border-radius: 50%;*/
+    cursor: pointer;
+    z-index: 0;
+    top: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.3s all ease;
+}
+
+.menuCircle span:nth-child(4) div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #174774;
+    padding: 10px;
+    border-radius: 50%;
+}
 .translateIcon{
     opacity: 1!important;
     z-index: 4!important;
@@ -172,7 +196,7 @@
 .friendAll{
     position: absolute;
     top: 0;
-    right: -280vw;
+    right: -300px;
     overflow: hidden;
 }
 
@@ -190,4 +214,44 @@
     min-height: 12vh;
     background-color: #F3EBEB;
     align-self: center;
+}
+
+
+.acceptList{
+    list-style: none;
+    position: absolute;
+    top: 40px;
+    left: -50px;
+    width: 150px;
+    height: max-content;
+    padding: 0;
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.acceptList h1{
+    font-size: 18px;
+    font-weight: 500;
+    color: black;
+    margin: 0;
+}
+
+.acceptList p{
+    color: black;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    cursor: pointer;
+    padding: 0px 4px 0px 10px;
+}
+
+.acceptList li{
+    cursor: auto;
+    display: flex;
+    height: 25px;
+    padding: 2px;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid black;
 }

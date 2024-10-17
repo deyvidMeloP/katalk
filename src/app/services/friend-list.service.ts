@@ -76,10 +76,10 @@ export class FriendListService {
 
   }
 
-  setKeyValue(key: any[], values: any[]){
+  setKeyValue(values: any[]){
 
-    this.friendsKey.next(key)
     this.friendsValues.next(values)
+    
   }
 
 
