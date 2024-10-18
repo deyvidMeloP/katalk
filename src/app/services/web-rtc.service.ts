@@ -53,12 +53,12 @@ export class WebRTCService {
   
     // Ao receber o stream remoto
     this.peerConnection.ontrack = (event) => {
-      console.log("ontrack chamado no startcall")
       const remoteStream = new MediaStream();
       event.streams[0].getTracks().forEach((track) => {
         remoteStream.addTrack(track);
       });
   
+      // Exibir o vídeo e o áudio remotos
       const remoteVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
       if (remoteVideo) {
         remoteVideo.srcObject = remoteStream;
@@ -172,7 +172,6 @@ stopMediaStream() {
   
     // Adicionando os streams remotos ao vídeo remoto
     this.peerConnection.ontrack = (event) => {
-      console.log("on track chamado em remote")
       const remoteStream = new MediaStream();
       event.streams[0].getTracks().forEach((track) => {
         remoteStream.addTrack(track);
