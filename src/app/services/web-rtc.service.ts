@@ -17,25 +17,22 @@ export class WebRTCService {
   constructor(private api: ApiService, private http: HttpClient) {}
 
   private url =  "https://katalk-api.onrender.com";
-
   startCall(mode: String) {
     const configuration = {
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     };
   
     this.peerConnection = new RTCPeerConnection(configuration);
-    
-
+  
     this.peerConnection.oniceconnectionstatechange = () => {
       if (this.peerConnection) {
         console.log("ICE Connection State:", this.peerConnection.iceConnectionState);
       }
     };
-
+  
     this.api.getAnswerCall().subscribe(
-      (answer:Offer)=>{
-        if(!answer.sdp.includes('recusada') && this.peerConnection){
-
+      (answer: Offer) => {
+        if (!answer.sdp.includes('recusada') && this.peerConnection) {
           this.peerConnection.onicecandidate = (event) => {
             if (event.candidate) {
               console.log("Enviando candidato ICE...");
@@ -44,59 +41,55 @@ export class WebRTCService {
               console.log("Todos os candidatos ICE foram enviados.");
             }
           };
-
+        } else if (this.peerConnection) {
+          this.stopMediaStream();
         }
-
-        else if(this.peerConnection){
-
-          this.stopMediaStream()
-    
-        }
-        
       },
-      (err: any)=>{
-        console.log("erro ao receber a offer" + err)
+      (err: any) => {
+        console.log("Erro ao receber a offer", err);
       }
-    )
+    );
   
-  
+    // Ao receber o stream remoto
     this.peerConnection.ontrack = (event) => {
       const remoteStream = new MediaStream();
-      remoteStream.addTrack(event.track);
-      const audioElement = document.getElementById('remoteAudio') as HTMLAudioElement;
-      if (audioElement) {
-        audioElement.srcObject = remoteStream;
+      event.streams[0].getTracks().forEach((track) => {
+        remoteStream.addTrack(track);
+      });
+  
+      // Exibir o vídeo e o áudio remotos
+      const remoteVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
+      if (remoteVideo) {
+        remoteVideo.srcObject = remoteStream;
+      }
+  
+      const remoteAudio = document.getElementById('remoteAudio') as HTMLAudioElement;
+      if (remoteAudio) {
+        remoteAudio.srcObject = remoteStream;
       }
     };
-
-
-    if(mode.includes('audio')){
+  
+    // Caso o modo seja apenas áudio
+    if (mode.includes('audio')) {
       navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-      .then((stream) => {
-        console.log('apenas microfone capturado:', stream);
-        stream.getTracks().forEach((track) => {
-          if (this.peerConnection) {
-            this.peerConnection.addTrack(track, stream);
-          }
+        .then((stream) => {
+          console.log('Apenas microfone capturado:', stream);
+          stream.getTracks().forEach((track) => {
+            if (this.peerConnection) {
+              this.peerConnection.addTrack(track, stream);
+            }
+          });
+  
+          console.log("Criando oferta...");
+          this.createOffer();
+        })
+        .catch((error) => {
+          console.error('Erro ao capturar microfone:', error);
         });
-  
-        // Exibe o vídeo local (para o usuário ver a si mesmo)
-        const localVideo = document.getElementById('localVideo') as HTMLVideoElement;
-        if (localVideo) {
-          localVideo.srcObject = stream;
-        }
-  
-        // Chama o createOffer agora que a conexão e a mídia estão configuradas
-        console.log("Criando oferta...");
-        this.createOffer(); // A chamada aqui está correta
-      })
-      .catch((error) => {
-        console.error('Erro ao capturar a câmera e microfone:', error);
-      });
-
     }
-
-    else if(mode.includes('video')){
+  
+    // Caso o modo seja vídeo e áudio
+    else if (mode.includes('video')) {
       navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then((stream) => {
           console.log('Câmera e microfone capturados:', stream);
@@ -105,31 +98,20 @@ export class WebRTCService {
               this.peerConnection.addTrack(track, stream);
             }
           });
-    
-          // Exibe o vídeo local (para o usuário ver a si mesmo)
-          const localVideo = document.getElementById('localVideo') as HTMLVideoElement;
-          if (localVideo) {
-            localVideo.srcObject = stream;
-          }
-    
-          // Chama o createOffer agora que a conexão e a mídia estão configuradas
+  
           console.log("Criando oferta...");
-          this.createOffer(); // A chamada aqui está correta
+          this.createOffer();
         })
         .catch((error) => {
-          console.error('Erro ao capturar a câmera e microfone:', error);
+          console.error('Erro ao capturar câmera e microfone:', error);
         });
-  
     }
-  
-    // Captura a mídia do usuário (áudio e vídeo)
-      
   }
-
+  
 
 stopMediaStream() {
 
-  const localVideo = document.getElementById('localVideo') as HTMLVideoElement;
+  const localVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
   if (localVideo && localVideo.srcObject) {
     const stream = localVideo.srcObject as MediaStream;
     stream.getTracks().forEach((track) => {
@@ -171,70 +153,71 @@ stopMediaStream() {
   }
   
 
-async newRemote(offerSdp: any) {
-  if (!this.peerConnection) {
-    const configuration = {
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-    };
-    this.peerConnection = new RTCPeerConnection(configuration);
-  }
-
-  this.peerConnection.onicecandidate = (event) => {
-    if (event.candidate) {
-      console.log("Candidatos ICE de B");
-      // Enviar o candidato ICE para o peer A via WebSocket
-      this.api.sendCandidateofB(event.candidate);
+  async newRemote(offerSdp: any) {
+    if (!this.peerConnection) {
+      const configuration = {
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+      };
+      this.peerConnection = new RTCPeerConnection(configuration);
     }
-  };
   
-
-  if (offerSdp.type === 'offer' && offerSdp.sdp) {
-    const remoteDescription = new RTCSessionDescription(offerSdp);
-
-    this.peerConnection.setRemoteDescription(remoteDescription)
-   
-        const answer = await this.peerConnection.createAnswer()
-    
-        this.peerConnection.setLocalDescription(answer);
-        this.api.sendAnswer(answer);
-     
-  } else {
-    console.error("Oferta SDP inválida: ", offerSdp);
-  }
-
-  
-  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-  .then((stream) => {
-    console.log('Câmera e microfone capturados:', stream);
-    stream.getTracks().forEach((track) => {
-      if(this.peerConnection)
-      this.peerConnection.addTrack(track, stream); // Adiciona a track de vídeo e áudio
-    });
-
-    // Exibe o vídeo local (para o usuário ver a si mesmo)
-    const localVideo = document.getElementById('localVideo') as HTMLVideoElement;
-    if (localVideo) {
-      localVideo.srcObject = stream;
-    }
-  })
-  .catch((error) => {
-    console.error('Erro ao capturar a câmera e microfone:', error);
-  });
-  
-    // Adicionar o fluxo de mídia local (áudio) ao PeerConnection
-   /* navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      stream.getTracks().forEach((track) => {
-      if(this.peerConnection){
-
-        console.log('Track adicionada:', track);
-      this.peerConnection.addTrack(track, stream);
-      
+    // Enviar candidatos ICE para o peer A
+    this.peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("Enviando candidatos ICE de B");
+        this.api.sendCandidateofB(event.candidate); // Enviar candidato ICE via WebSocket
       }
+    };
+  
+    // Adicionando os streams remotos ao vídeo remoto
+    this.peerConnection.ontrack = (event) => {
+      const remoteStream = new MediaStream();
+      event.streams[0].getTracks().forEach((track) => {
+        remoteStream.addTrack(track);
       });
-    });*/
+  
+      const remoteVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
+      if (remoteVideo) {
+        remoteVideo.srcObject = remoteStream;
+      }
+  
+      const remoteAudio = document.getElementById('remoteAudio') as HTMLAudioElement;
+      if (remoteAudio) {
+        remoteAudio.srcObject = remoteStream;
+      }
+    };
+  
+    // Processa a oferta recebida
+    if (offerSdp.type === 'offer' && offerSdp.sdp) {
+      const remoteDescription = new RTCSessionDescription(offerSdp);
+  
+      // Configura a descrição remota e cria a resposta
+      await this.peerConnection.setRemoteDescription(remoteDescription);
+      const answer = await this.peerConnection.createAnswer();
+      
+      // Define a descrição local com a resposta e a envia para o peer A
+      await this.peerConnection.setLocalDescription(answer);
+      this.api.sendAnswer(answer);
+    } else {
+      console.error("Oferta SDP inválida: ", offerSdp);
+    }
+  
+    // Captura o stream local de vídeo e áudio
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        console.log('Câmera e microfone capturados:', stream);
+        stream.getTracks().forEach((track) => {
+          if (this.peerConnection) {
+            this.peerConnection.addTrack(track, stream); // Adiciona a track de vídeo e áudio
+          }
+        });
 
-}
-
+      })
+      .catch((error) => {
+        console.error('Erro ao capturar a câmera e microfone:', error);
+      });
+  }
+  
 
 remoteCall(answer: any){
   if(this.peerConnection)
