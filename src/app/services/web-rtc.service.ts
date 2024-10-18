@@ -113,7 +113,7 @@ export class WebRTCService {
 stopMediaStream() {
 
   const localVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
-  if (localVideo && localVideo.srcObject) {
+  if (localVideo) {
     const stream = localVideo.srcObject as MediaStream;
     stream.getTracks().forEach((track) => {
       track.stop(); 

@@ -36,6 +36,9 @@ callReceived: boolean = false
 callAccept: boolean = false
 
   ngOnInit(): void {
+   localStorage.removeItem('sendCall')
+   localStorage.removeItem('getCall')
+   localStorage.removeItem('dateCall')
    this.getOffer()
    this.getAnswerCall()
    this.getCandidate() 
