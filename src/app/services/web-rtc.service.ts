@@ -25,40 +25,49 @@ export class WebRTCService {
   
     this.peerConnection = new RTCPeerConnection(configuration);
   
+    // Controle do estado da conexão ICE
     this.peerConnection.oniceconnectionstatechange = () => {
       if (this.peerConnection) {
         console.log("ICE Connection State:", this.peerConnection.iceConnectionState);
       }
     };
   
+    // Recebe a resposta do peer B
     this.api.getAnswerCall().subscribe(
       (answer: Offer) => {
         if (!answer.sdp.includes('recusada') && this.peerConnection) {
-          this.peerConnection.onicecandidate = (event) => {
-            if (event.candidate) {
-              console.log("Enviando candidato ICE...");
-              this.api.sendCandidate(event.candidate); // Envia o candidato ICE
-            } else {
-              console.log("Todos os candidatos ICE foram enviados.");
-            }
-          };
-        } else if (this.peerConnection) {
+          // Converte o sdp de String para string (primitivo)
+          const remoteDescription = new RTCSessionDescription({
+            type: answer.type as RTCSdpType,
+            sdp: String(answer.sdp) // Converte para string primitivo
+          });
+          this.peerConnection.setRemoteDescription(remoteDescription);
+        } else {
+          console.log("Chamada recusada ou erro na resposta.");
           this.stopMediaStream();
         }
       },
       (err: any) => {
-        console.log("Erro ao receber a offer", err);
+        console.log("Erro ao receber a resposta", err);
       }
     );
-    this.createOffer();
-    // Ao receber o stream remoto
+    
+  
+    // Envia candidatos ICE do peer A para o peer B
+    this.peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("Enviando candidato ICE...");
+        this.api.sendCandidate(event.candidate);
+      }
+    };
+  
+    // Recebe o stream remoto do peer B
     this.peerConnection.ontrack = (event) => {
       const remoteStream = new MediaStream();
       event.streams[0].getTracks().forEach((track) => {
         remoteStream.addTrack(track);
       });
   
-      // Exibir o vídeo e o áudio remotos
       const remoteVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
       if (remoteVideo) {
         remoteVideo.srcObject = remoteStream;
@@ -70,9 +79,9 @@ export class WebRTCService {
       }
     };
   
-    // Caso o modo seja apenas áudio
+    // Captura o stream local baseado no modo (áudio ou vídeo)
     if (mode.includes('audio')) {
-      navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+      navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
           console.log('Apenas microfone capturado:', stream);
           stream.getTracks().forEach((track) => {
@@ -80,17 +89,12 @@ export class WebRTCService {
               this.peerConnection.addTrack(track, stream);
             }
           });
-  
-          console.log("Criando oferta...");
-  
+          this.createOffer(); // Cria e envia a oferta SDP
         })
         .catch((error) => {
           console.error('Erro ao capturar microfone:', error);
         });
-    }
-  
-    // Caso o modo seja vídeo e áudio
-    else if (mode.includes('video')) {
+    } else if (mode.includes('video')) {
       navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then((stream) => {
           console.log('Câmera e microfone capturados:', stream);
@@ -99,15 +103,14 @@ export class WebRTCService {
               this.peerConnection.addTrack(track, stream);
             }
           });
-  
-          console.log("Criando oferta...");
-    
+          this.createOffer(); // Cria e envia a oferta SDP
         })
         .catch((error) => {
           console.error('Erro ao capturar câmera e microfone:', error);
         });
     }
   }
+  
   
 
 stopMediaStream() {
