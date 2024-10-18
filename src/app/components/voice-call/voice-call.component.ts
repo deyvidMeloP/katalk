@@ -121,7 +121,6 @@ callAccept: boolean = false
           }
         )
 
-
       },
       (err: any)=>{
         console.log("erro ao receber a voiceCall");

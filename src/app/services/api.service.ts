@@ -64,7 +64,7 @@ registerWorker(){
       map(message => {
         const body = JSON.parse(message.body);
  
-       // console.log('Notification receivedaakakaka:', body); // Verificando o que foi recebido
+       console.log('Notification receivedaakakaka:', body); // Verificando o que foi recebido
         return body as ChatEntity;
       })
     );

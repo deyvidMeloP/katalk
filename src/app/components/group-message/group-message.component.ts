@@ -74,7 +74,7 @@ export class GroupMessageComponent implements OnInit {
     
     })
 
-    this.chat.currentFriendList.subscribe((data: any)=>{
+   /* this.chat.currentFriendList.subscribe((data: any)=>{
       const friendAll = document.querySelector(".friendAll") as HTMLElement
         
       if(friendAll && data){
@@ -83,7 +83,7 @@ export class GroupMessageComponent implements OnInit {
        
         
       }
-    )
+    )*/
     
   }
 
@@ -278,10 +278,13 @@ teste(){
 }
 
   async showMenu(){
+    console.log("showmeu")
     const icon = document.querySelectorAll(".menuCircle span") as NodeListOf<HTMLElement>
     const menuButton = document.querySelector(".menu_Button") as HTMLElement
     
-    if(this.toggle){    
+    if(this.toggle){ 
+      
+      this.toggle = !this.toggle   
       menuButton.classList.add('menuClose')
       menuButton.classList.add('translateIcon')
 
@@ -307,9 +310,10 @@ teste(){
     }
 
     else{
-
-     await menuButton.classList.remove('translateIcon')
-     await menuButton.classList.remove('menuClose')
+      
+      this.toggle = !this.toggle
+      await menuButton.classList.remove('translateIcon')
+      await menuButton.classList.remove('menuClose')
       let cont = 0
       for(let i = 0; i < icon.length; i++){
       
@@ -322,14 +326,11 @@ teste(){
       }
 
     }
-    this.toggle = !this.toggle
- 
-   
-    
   
 }
 
 clickCloseMenu(){
+  console.log("clickclosemenu")
   const menuClose = document.querySelector(".menuClose") as HTMLElement
   const acceptList = document.querySelector(".acceptList") as HTMLElement
   const friendAll = document.querySelector(".friendAll") as HTMLElement
@@ -337,6 +338,19 @@ clickCloseMenu(){
   if(menuClose && menuClose.classList.contains('translateIcon')){
     this.showMenu()  
     acceptList.style.display = 'none'
+  }
+
+  if(friendAll ){
+
+    const right =  window.getComputedStyle(friendAll).right
+
+    const [number, space] = right.split("px")
+   
+    const teste = Number(number)
+   
+    if(teste >= 0){
+     friendAll.classList.remove('transition')
+    }
   }
 
 }
@@ -370,13 +384,9 @@ delay(ms: number) {
 
 
 showFriendList(){
-  this.showMenu()
   const friendAll = document.querySelector(".friendAll") as HTMLElement
-  friendAll.style.display = "block"
-
-  this.showMenu()
-
   friendAll.classList.add('transition')
+  this.showMenu()
   
 
 
@@ -392,7 +402,7 @@ addNewGroup(listAccept: any){
 
   if(!listAccept.userUid.includes(localStorage.getItem('Auth'))){
 
-    uid = listAccept.useruid
+    uid = listAccept.userUid
   }
   else{
     uid = listAccept.friendUid

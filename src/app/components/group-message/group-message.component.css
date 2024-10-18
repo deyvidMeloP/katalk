@@ -198,11 +198,12 @@
     top: 0;
     right: -300px;
     overflow: hidden;
+    transition: 0.3s ease all;
 }
 
 .transition{
     right: 0px;
-    transition: 0.3s ease all;
+
 }
 
 
@@ -220,7 +221,7 @@
 .acceptList{
     list-style: none;
     position: absolute;
-    top: 40px;
+    top: 50px;
     left: -50px;
     width: 150px;
     height: max-content;
@@ -250,8 +251,8 @@
     cursor: auto;
     display: flex;
     height: 25px;
-    padding: 2px;
+    padding: 4px;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid black;
+    border: 1px solid white;
 }

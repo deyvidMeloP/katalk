@@ -27,7 +27,6 @@ teste: any[] = []
   ngOnInit(){
 
     this.getAllMessage()
-    
     this.requestNotificationPermission()
     this.changeService.currentChatMessage.subscribe((data)=>{
       if(data != "" && data){
@@ -85,8 +84,8 @@ teste: any[] = []
    
     this.api.getMessage().subscribe(
       (data: any)=>{
-
         if(localStorage.getItem('ChatOpen') == data.userSend){
+         
           this.updateMessage(data, data.userSend)
           this.clearMessage.push(data)
           
@@ -284,13 +283,12 @@ teste: any[] = []
      
      const dateFormat: string = `${format}T${dateHours}`
      chatEntity.userSend = `${localStorage.getItem('Auth')}`
-     chatEntity.userGet = this.chatInformation.uid
+     chatEntity.userGet = `${localStorage.getItem('ChatOpen')}`
      chatEntity.dateChat = dateFormat
      chatEntity.messageChat = this.message
      this.clearMessage.push(chatEntity)
      
      this.usernames.push("Eu")
-
      setTimeout(() => {   
       this.createSendMessage()
 

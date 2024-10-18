@@ -463,10 +463,4 @@ export class FriendAllComponent implements OnInit{
     
   }
 
-  closeFriendBox(){
-   this.stateFriend = this.stateFriend + 1
-    this.chat.changeFriendList(this.stateFriend);
-
-   
-  }
 }

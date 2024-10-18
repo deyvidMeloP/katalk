@@ -6,6 +6,7 @@
   background-color: #94afd6;
   display: flex;
   min-height: 100vh;
+  position: relative;
 }
 
 .box_All{
@@ -20,6 +21,20 @@
   display: none;
 }
 
+.box button{
+  position: absolute;
+  bottom: 0px;
+  right: 10px;
+  border: none;
+  padding: 5px 10px 5px 10px;
+  border-radius: 10px;
+  background-color: white;
+}
+
+
+.box button:hover{
+  background-color: #aac9f5;
+}
 
 
 /*
