@@ -132,7 +132,6 @@ callAccept: boolean = false
     this.callReceived = false
     this.callAccept = true
     console.log("ligação aceita")
-    console.log(this.offer.sdp)
     this.webRTCService.newRemote(this.offer)
   }
 
