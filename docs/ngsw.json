@@ -1,0 +1,96 @@
+{
+  "configVersion": 1,
+  "timestamp": 1729218100540,
+  "index": "/katalk/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/katalk/favicon.ico",
+        "/katalk/index.html",
+        "/katalk/main.e30fa1d36e97c7ea.js",
+        "/katalk/manifest.webmanifest",
+        "/katalk/polyfills.5b5196fede062d9e.js",
+        "/katalk/runtime.59ddf5a0bf3b869f.js",
+        "/katalk/styles.ef46db3751d8e999.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/katalk/assets/icon/icon-128x128.png",
+        "/katalk/assets/icon/icon-144x144.png",
+        "/katalk/assets/icon/icon-152x152.png",
+        "/katalk/assets/icon/icon-192x192.png",
+        "/katalk/assets/icon/icon-384x384.png",
+        "/katalk/assets/icon/icon-512x512.png",
+        "/katalk/assets/icon/icon-72x72.png",
+        "/katalk/assets/icon/icon-96x96.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "firebase-messaging",
+      "patterns": [
+        "https:\\/\\/fcm\\.googleapis\\.com\\/fcm\\/[^/]*"
+      ],
+      "strategy": "freshness",
+      "maxSize": 5,
+      "maxAge": 86400000,
+      "timeoutMs": 10000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
+  "hashTable": {
+    "/katalk/assets/icon/icon-128x128.png": "f912963bdc6d5a38d8f1dd0afbaab2ce8d657acb",
+    "/katalk/assets/icon/icon-144x144.png": "b155fd5f2fd5d2ea7760721063003c4cd95fd783",
+    "/katalk/assets/icon/icon-152x152.png": "eae6e0f0c8afb8aaae339e2a569b43e9238e5e6c",
+    "/katalk/assets/icon/icon-192x192.png": "15c4180454633880d98674aa7394656196c91584",
+    "/katalk/assets/icon/icon-384x384.png": "94a915751ef6c9282df9aea405ad679230631814",
+    "/katalk/assets/icon/icon-512x512.png": "1de182f76f7329dfa8f9fcdd1fdcdd695bea6a99",
+    "/katalk/assets/icon/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
+    "/katalk/assets/icon/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
+    "/katalk/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
+    "/katalk/index.html": "9fe88ed62064d312e1a497d5489aa9ca49eb5649",
+    "/katalk/main.e30fa1d36e97c7ea.js": "2719cbba856343d3e18cae0455334b1e6b656c2c",
+    "/katalk/manifest.webmanifest": "a6e9d56df8b288489213038e0ff14151e67511b3",
+    "/katalk/polyfills.5b5196fede062d9e.js": "b059c835770bbb288ce5566d272e12e688ec81cf",
+    "/katalk/runtime.59ddf5a0bf3b869f.js": "61975d8156e6e948881f6f196925fe0ac2784821",
+    "/katalk/styles.ef46db3751d8e999.css": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
