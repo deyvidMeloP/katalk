@@ -17,6 +17,7 @@ export class WebRTCService {
   constructor(private api: ApiService, private http: HttpClient) {}
 
   private url =  "https://katalk-api.onrender.com";
+  
   startCall(mode: String) {
     const configuration = {
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
@@ -49,7 +50,7 @@ export class WebRTCService {
         console.log("Erro ao receber a offer", err);
       }
     );
-  
+    this.createOffer();
     // Ao receber o stream remoto
     this.peerConnection.ontrack = (event) => {
       const remoteStream = new MediaStream();
@@ -81,7 +82,7 @@ export class WebRTCService {
           });
   
           console.log("Criando oferta...");
-          this.createOffer();
+  
         })
         .catch((error) => {
           console.error('Erro ao capturar microfone:', error);
@@ -100,7 +101,7 @@ export class WebRTCService {
           });
   
           console.log("Criando oferta...");
-          this.createOffer();
+    
         })
         .catch((error) => {
           console.error('Erro ao capturar câmera e microfone:', error);
