@@ -18,7 +18,7 @@ export class ApiService {
   private stompClient: Stomp.Client | undefined;
 
   private stompConfig: RxStompConfig = {
-    brokerURL: 'ws://localhost:8080/chat-websocket',
+    brokerURL: 'wss://katalk-api.onrender.com/chat-websocket',
     connectHeaders: {},
     debug: (msg: string) => {
    
@@ -278,7 +278,7 @@ console.log('candidatos')
   
 
 
-  private url = 'http://localhost:8080'
+  private url = 'https://katalk-api.onrender.com'
 
 
   getAllUser(): Observable<any[]>{

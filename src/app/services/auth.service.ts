@@ -17,7 +17,7 @@ export class AuthService {
 
   constructor(private fireauth: AngularFireAuth, private router: Router, private api: ApiService, private http: HttpClient) { }
 
-   private url = 'http://localhost:8080'
+   private url = 'https://katalk-api.onrender.com'
 
   login(email: string, password: string){
     this.fireauth.signInWithEmailAndPassword(email, password).then(()=>{

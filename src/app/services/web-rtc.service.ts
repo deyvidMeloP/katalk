@@ -16,7 +16,7 @@ export class WebRTCService {
 
   constructor(private api: ApiService, private http: HttpClient) {}
 
-  private url =  "http://localhost:8080";
+  private url =  "https://katalk-api.onrender.com";
 
   startCall(mode: String) {
     const configuration = {

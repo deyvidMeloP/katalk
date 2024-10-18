@@ -19,11 +19,11 @@ export class FriendListService {
 
   }
 
-  private url = 'http://localhost:8080'
+  private url = 'https://katalk-api.onrender.com'
   private friendsKey = new BehaviorSubject<any[]>([])
   private friendsValues = new BehaviorSubject<any[]>([])
   private stompConfig: RxStompConfig = {
-    brokerURL: 'ws://localhost:8080/chat-websocket',
+    brokerURL: 'wss://katalk-api.onrender.com/chat-websocket',
     connectHeaders: {},
     debug: (msg: string) => {
    
