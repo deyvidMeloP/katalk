@@ -32,29 +32,6 @@ export class WebRTCService {
     };
   //nao entendi
   
-<<<<<<< HEAD
-    this.api.getAnswerCall().subscribe(
-      (answer: Offer) => {
-        if (!answer.sdp.includes('recusada') && this.peerConnection) {
-          this.peerConnection.onicecandidate = (event) => {
-            if (event.candidate) {
-              console.log("Enviando candidato ICE...");
-              this.api.sendCandidate(event.candidate); // Envia o candidato ICE
-            } else {
-              console.log("Todos os candidatos ICE foram enviados.");
-            }
-          };
-        } else if (this.peerConnection) {
-          this.stopMediaStream();
-        }
-      },
-      (err: any) => {
-        console.log("Erro ao receber a offer", err);
-      }
-    );
-  
-=======
->>>>>>> continuacaoAtt2
     // Ao receber o stream remoto
     this.peerConnection.ontrack = (event) => {
       const remoteStream = new MediaStream();
@@ -109,12 +86,8 @@ export class WebRTCService {
           });
           this.createOffer();
           console.log("Criando oferta...");
-<<<<<<< HEAD
-          this.createOffer();
-=======
           if(this.peerConnection)
           console.log("estado2:", this.peerConnection.iceConnectionState);
->>>>>>> continuacaoAtt2
         })
         .catch((error) => {
           console.error('Erro ao capturar microfone:', error);
