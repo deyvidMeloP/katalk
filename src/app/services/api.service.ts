@@ -139,7 +139,7 @@ console.log('candidatos')
   }
 
   sendOffer(offer: any){
-
+    console.log("offer enviada")
     const dateString: any = new Date().toLocaleDateString()
     const dateHours: any = new Date().toLocaleTimeString()
    
@@ -177,7 +177,6 @@ console.log('candidatos')
         call: call
       };
    
-      console.log("sendoffer"+ webRTCMessage.sdp)
       this.stompService.publish({
         destination: `/app/sendOffer`, // O destino definido no backend
         body: JSON.stringify(webRTCMessage) // Converte o objeto WebRTCMessage para JSON

@@ -53,6 +53,7 @@ export class WebRTCService {
   
     // Ao receber o stream remoto
     this.peerConnection.ontrack = (event) => {
+      console.log("on track chamdao")
       const remoteStream = new MediaStream();
       event.streams[0].getTracks().forEach((track) => {
         remoteStream.addTrack(track);
@@ -172,6 +173,7 @@ stopMediaStream() {
   
     // Adicionando os streams remotos ao vídeo remoto
     this.peerConnection.ontrack = (event) => {
+      console.log("ontrack chamado")
       const remoteStream = new MediaStream();
       event.streams[0].getTracks().forEach((track) => {
         remoteStream.addTrack(track);
@@ -198,6 +200,7 @@ stopMediaStream() {
       
       // Define a descrição local com a resposta e a envia para o peer A
       await this.peerConnection.setLocalDescription(answer);
+      console.log("remote e local criados")
       this.api.sendAnswer(answer);
     } else {
       console.error("Oferta SDP inválida: ", offerSdp);
