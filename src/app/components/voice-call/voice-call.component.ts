@@ -163,7 +163,7 @@ callAccept: boolean = false
           if(answer.sdp.includes('recusada')){
             this.callAccept = false
           }
-          this.webRTCService.remoteCall(answer)
+       
           console.log('ANSWER RECEBIDA NA HOME:', data);
       
       },
