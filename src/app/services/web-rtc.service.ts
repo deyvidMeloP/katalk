@@ -30,6 +30,8 @@ export class WebRTCService {
         console.log("ICE Connection State:", this.peerConnection.iceConnectionState);
       }
     };
+
+
   //nao entendi
   
     // Ao receber o stream remoto
@@ -55,16 +57,6 @@ export class WebRTCService {
       (answer: Offer) => {
         if (!answer.sdp.includes('recusada') && this.peerConnection) {
           console.log("answer em startcall")
-          this.remoteCall(answer)
-          
-          this.peerConnection.onicecandidate = (event) => {
-            if (event.candidate) {
-              console.log("Enviando candidato ICE...");
-              this.api.sendCandidate(event.candidate); // Envia o candidato ICE
-            } else {
-              console.log("Todos os candidatos ICE foram enviados.");
-            }
-          };
         } else if (this.peerConnection) {
           this.stopMediaStream();
         }
@@ -104,7 +96,6 @@ export class WebRTCService {
               this.peerConnection.addTrack(track, stream);
             }
           });
-          this.createOffer();
           console.log("Criando oferta...");
           this.createOffer();
         })
@@ -166,6 +157,13 @@ stopMediaStream() {
       };
       this.peerConnection = new RTCPeerConnection(configuration);
     }
+
+    this.peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("Enviando candidatos ICE de B");
+        this.api.sendCandidateofB(event.candidate); // Enviar candidato ICE via WebSocket
+      }
+    };
   
     // Adicionando os streams remotos ao vídeo remoto
     this.peerConnection.ontrack = (event) => {
@@ -186,24 +184,20 @@ stopMediaStream() {
     };
 
     // Enviar candidatos ICE para o peer A
-    this.peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        console.log("Enviando candidatos ICE de B");
-        this.api.sendCandidateofB(event.candidate); // Enviar candidato ICE via WebSocket
-      }
-    };
 
     // Processa a oferta recebida
     if (offerSdp.type === 'offer' && offerSdp.sdp) {
       const remoteDescription = new RTCSessionDescription(offerSdp);
   
       // Configura a descrição remota e cria a resposta
+      console.log("remote criado")
       await this.peerConnection.setRemoteDescription(remoteDescription);
       
       const answer = await this.peerConnection.createAnswer();
       
       // Define a descrição local com a resposta e a envia para o peer A
       await this.peerConnection.setLocalDescription(answer);
+     
       this.api.sendAnswer(answer);
     } else {
       console.error("Oferta SDP inválida: ", offerSdp);
@@ -227,9 +221,19 @@ stopMediaStream() {
   
 
 remoteCall(answer: any){
+  console.log("remotecall chamado")
   if(this.peerConnection)
   this.peerConnection.setRemoteDescription(answer)
   .then(() => {
+    if(this.peerConnection)
+    this.peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("Enviando candidato ICE...");
+        this.api.sendCandidate(event.candidate); // Envia o candidato ICE
+      } else {
+        console.log("Todos os candidatos ICE foram enviados.");
+      }
+    };
     console.log('Answer aplicada no lado A como descrição remota');
   });
 }

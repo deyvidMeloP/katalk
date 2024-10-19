@@ -135,6 +135,7 @@ callAccept: boolean = false
     this.callReceived = false
     this.callAccept = true
     console.log("ligação aceita")
+    console.log(this.offer.sdp)
     this.webRTCService.newRemote(this.offer)
   }
 
@@ -162,7 +163,7 @@ callAccept: boolean = false
           if(answer.sdp.includes('recusada')){
             this.callAccept = false
           }
-       
+          this.webRTCService.remoteCall(answer)
           console.log('ANSWER RECEBIDA NA HOME:', data);
       
       },
