@@ -36,6 +36,9 @@ callReceived: boolean = false
 callAccept: boolean = false
 
   ngOnInit(): void {
+   localStorage.removeItem('sendCall')
+   localStorage.removeItem('getCall')
+   localStorage.removeItem('dateCall')
    this.getOffer()
    this.getAnswerCall()
    this.getCandidate() 
@@ -159,7 +162,7 @@ callAccept: boolean = false
           if(answer.sdp.includes('recusada')){
             this.callAccept = false
           }
-          this.webRTCService.remoteCall(answer)
+       
           console.log('ANSWER RECEBIDA NA HOME:', data);
       
       },

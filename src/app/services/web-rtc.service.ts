@@ -24,13 +24,15 @@ export class WebRTCService {
     };
   
     this.peerConnection = new RTCPeerConnection(configuration);
-  
+    console.log("estado 1:", this.peerConnection.iceConnectionState);
     this.peerConnection.oniceconnectionstatechange = () => {
       if (this.peerConnection) {
         console.log("ICE Connection State:", this.peerConnection.iceConnectionState);
       }
     };
+  //nao entendi
   
+<<<<<<< HEAD
     this.api.getAnswerCall().subscribe(
       (answer: Offer) => {
         if (!answer.sdp.includes('recusada') && this.peerConnection) {
@@ -51,6 +53,8 @@ export class WebRTCService {
       }
     );
   
+=======
+>>>>>>> continuacaoAtt2
     // Ao receber o stream remoto
     this.peerConnection.ontrack = (event) => {
       const remoteStream = new MediaStream();
@@ -69,6 +73,29 @@ export class WebRTCService {
         remoteAudio.srcObject = remoteStream;
       }
     };
+
+    this.api.getAnswerCall().subscribe(
+      (answer: Offer) => {
+        if (!answer.sdp.includes('recusada') && this.peerConnection) {
+          console.log("answer em startcall")
+          this.remoteCall(answer)
+          
+          this.peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+              console.log("Enviando candidato ICE...");
+              this.api.sendCandidate(event.candidate); // Envia o candidato ICE
+            } else {
+              console.log("Todos os candidatos ICE foram enviados.");
+            }
+          };
+        } else if (this.peerConnection) {
+          this.stopMediaStream();
+        }
+      },
+      (err: any) => {
+        console.log("Erro ao receber a offer", err);
+      }
+    );
   
     // Caso o modo seja apenas áudio
     if (mode.includes('audio')) {
@@ -80,9 +107,14 @@ export class WebRTCService {
               this.peerConnection.addTrack(track, stream);
             }
           });
-  
-          console.log("Criando oferta...");
           this.createOffer();
+          console.log("Criando oferta...");
+<<<<<<< HEAD
+          this.createOffer();
+=======
+          if(this.peerConnection)
+          console.log("estado2:", this.peerConnection.iceConnectionState);
+>>>>>>> continuacaoAtt2
         })
         .catch((error) => {
           console.error('Erro ao capturar microfone:', error);
@@ -99,7 +131,7 @@ export class WebRTCService {
               this.peerConnection.addTrack(track, stream);
             }
           });
-  
+          this.createOffer();
           console.log("Criando oferta...");
           this.createOffer();
         })
@@ -113,7 +145,7 @@ export class WebRTCService {
 stopMediaStream() {
 
   const localVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
-  if (localVideo && localVideo.srcObject) {
+  if (localVideo) {
     const stream = localVideo.srcObject as MediaStream;
     stream.getTracks().forEach((track) => {
       track.stop(); 
@@ -162,14 +194,6 @@ stopMediaStream() {
       this.peerConnection = new RTCPeerConnection(configuration);
     }
   
-    // Enviar candidatos ICE para o peer A
-    this.peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        console.log("Enviando candidatos ICE de B");
-        this.api.sendCandidateofB(event.candidate); // Enviar candidato ICE via WebSocket
-      }
-    };
-  
     // Adicionando os streams remotos ao vídeo remoto
     this.peerConnection.ontrack = (event) => {
       const remoteStream = new MediaStream();
@@ -187,13 +211,22 @@ stopMediaStream() {
         remoteAudio.srcObject = remoteStream;
       }
     };
-  
+
+    // Enviar candidatos ICE para o peer A
+    this.peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("Enviando candidatos ICE de B");
+        this.api.sendCandidateofB(event.candidate); // Enviar candidato ICE via WebSocket
+      }
+    };
+
     // Processa a oferta recebida
     if (offerSdp.type === 'offer' && offerSdp.sdp) {
       const remoteDescription = new RTCSessionDescription(offerSdp);
   
       // Configura a descrição remota e cria a resposta
       await this.peerConnection.setRemoteDescription(remoteDescription);
+      
       const answer = await this.peerConnection.createAnswer();
       
       // Define a descrição local com a resposta e a envia para o peer A
