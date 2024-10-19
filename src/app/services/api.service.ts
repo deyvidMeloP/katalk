@@ -157,7 +157,7 @@ console.log('candidatos')
     const url = "/topic/answerCall/"
     const num1 = `${localStorage.getItem('Auth')}/`
     const num2 = `${localStorage.getItem('getCall')}`
-   
+   console.log("")
     if(sendUid){
       localStorage.setItem('sendCall', sendUid)
     }

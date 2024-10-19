@@ -23,7 +23,14 @@ export class WebRTCService {
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     };
   
-    this.peerConnection = new RTCPeerConnection(configuration);
+    if(this.peerConnection){
+      this.stopMediaStream() 
+
+    }
+    else{
+      this.peerConnection = new RTCPeerConnection(configuration);
+    }
+    
   
     this.peerConnection.oniceconnectionstatechange = () => {
       if (this.peerConnection) {
@@ -114,7 +121,7 @@ export class WebRTCService {
 stopMediaStream() {
 
   const localVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
-  if (localVideo && localVideo.srcObject) {
+  if (localVideo) {
     const stream = localVideo.srcObject as MediaStream;
     stream.getTracks().forEach((track) => {
       track.stop(); 
@@ -130,6 +137,10 @@ stopMediaStream() {
   const audioElement = document.getElementById('remoteAudio') as HTMLAudioElement;
   if (audioElement) {
     audioElement.srcObject = null;
+  }
+  const video = document.getElementById('remoteVideo') as HTMLAudioElement;
+  if (video) {
+    video.srcObject = null;
   }
 }
 
