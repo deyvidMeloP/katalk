@@ -129,27 +129,25 @@ export class WebRTCService {
   
 
 stopMediaStream() {
-  if (this.streamLocal) {
-    this.streamLocal.getTracks().forEach((track: { stop: () => any; }) => track.stop());
-    this.streamLocal = null;
-  }
-
-
-  const remoteVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
-  if (remoteVideo) {
-    const stream = remoteVideo.srcObject as MediaStream;
-    stream.getTracks().forEach((track) => {
-      track.stop();
-    });
-    remoteVideo.srcObject = null;
-  }
-
+ 
   if (this.peerConnection) {
     this.peerConnection.close();
     console.log("ICE Connection State cancel:", this.peerConnection.iceConnectionState);
     this.candidate = []
     this.peerConnection = null;  
   }
+ 
+  if (this.streamLocal) {
+    this.streamLocal.getTracks().forEach((track: { stop: () => any; }) => track.stop());
+    this.streamLocal = null;
+  }
+
+  const remoteVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
+  if (remoteVideo) {
+    const stream = remoteVideo.srcObject as MediaStream;
+    remoteVideo.srcObject = null;
+  }
+
 
   const audioElement = document.getElementById('remoteAudio') as HTMLAudioElement;
   if (audioElement) {

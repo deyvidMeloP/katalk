@@ -131,7 +131,6 @@ callAccept: boolean = false
         localStorage.setItem('getCall', this.offerRTC.call.getUid)
         localStorage.setItem('dateCall', this.offerRTC.call.date)
         this.answerCancelCall()
-        console.log("sendCall Depois"+ localStorage.getItem("sendCall"))
         this.api.getByUser(`${localStorage.getItem('sendCall')}`).subscribe(
           (data: any)=>{
             this.userCall = data
@@ -256,27 +255,27 @@ callAccept: boolean = false
   }
 
   closeCall(){
+    this.webRTCService.stopMediaStream()
     this.callAccept = false
     this.cancelCall.status = 'cancelado'
     this.cancelCall.uid = `${localStorage.getItem('sendCall')}`
+    this.api.cancelCall(this.cancelCall)
     localStorage.removeItem('getCall')
     localStorage.removeItem('dateCall')
     localStorage.removeItem("sendCall")
    
-    this.api.cancelCall(this.cancelCall)
-    this.webRTCService.stopMediaStream()
   }
 
   answerCancelCall(){    
     this.api.answerCancelCall().subscribe(
       (data: any)=>{
-        console.log("chamada cancelada"+ data.uid)
+        console.log("chamada encerrada")
+        this.webRTCService.stopMediaStream()
         this.callReceived = false
         this.callAccept = false
         localStorage.removeItem('getCall')
         localStorage.removeItem('dateCall')
         localStorage.removeItem("sendCall")
-        this.webRTCService.stopMediaStream()
       },
       (err: any)=>{
         console.log("erro ao receber cancelamento de chamada"+ err)
