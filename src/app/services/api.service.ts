@@ -139,36 +139,11 @@ console.log('candidatos')
   }
 
   sendOffer(offer: any){
-    console.log("offer enviada")
-    const dateString: any = new Date().toLocaleDateString()
-    const dateHours: any = new Date().toLocaleTimeString()
-   
-    const year = `${dateString[6]}${dateString[7]}${dateString[8]}${dateString[9]}`
-    const month =  `${dateString[3]}${dateString[4]}`
-    const day = `${dateString[0]}${dateString[1]}`
-  
-    let format: string = `${year}-${month}-${day}`
-     
-    const dateFormat: string = `${format}T${dateHours}`
-    localStorage.setItem('dateCall', dateFormat)
-    const sendUid =  localStorage.getItem('Auth')
-    const getUid =  localStorage.getItem('ChatOpen')
-
-    const url = "/topic/answerCall/"
-    const num1 = `${localStorage.getItem('Auth')}/`
-    const num2 = `${localStorage.getItem('getCall')}`
-   console.log("")
-    if(sendUid){
-      localStorage.setItem('sendCall', sendUid)
-    }
-    if(getUid){
-      localStorage.setItem('getCall', getUid)
-    }
-   
+    console.log("offer enviada")   
     const call = {
       sendUid: localStorage.getItem('sendCall'),
       getUid: localStorage.getItem('getCall'),
-      date: dateFormat
+      date:  localStorage.getItem('dateCall')
     }
     
     const webRTCMessage = {

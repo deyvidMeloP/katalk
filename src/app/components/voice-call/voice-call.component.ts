@@ -35,18 +35,47 @@ nameCall: string = ''
 callReceived: boolean = false
 callAccept: boolean = false
 
-  ngOnInit(): void {  
+  ngOnInit(): void { 
    
    this.getOffer()
    this.getAnswerCall()
    this.getCandidate() 
    this.getCandidateofB()
+  
   }
 
   clickCall(mode: String){
+    localStorage.setItem('dateCall', this.timeNow())
+    const sendUid =  localStorage.getItem('Auth')
+    const getUid =  localStorage.getItem('ChatOpen')
+
+    if(sendUid){
+      localStorage.setItem('sendCall', sendUid)
+    }
+    if(getUid){
+      localStorage.setItem('getCall', getUid)
+    }
+
     this.callAccept = true
     this.webRTCService.startCall(mode)
+    this.answerCancelCall()
+ 
+  }
+
+  timeNow(): string{
+
+    const dateString: any = new Date().toLocaleDateString()
+    const dateHours: any = new Date().toLocaleTimeString()
+   
+    const year = `${dateString[6]}${dateString[7]}${dateString[8]}${dateString[9]}`
+    const month =  `${dateString[3]}${dateString[4]}`
+    const day = `${dateString[0]}${dateString[1]}`
   
+    let format: string = `${year}-${month}-${day}`
+     
+    const dateFormat: string = `${format}T${dateHours}`
+    return dateFormat
+
   }
 
   
@@ -55,7 +84,7 @@ callAccept: boolean = false
       (data: any)=>{
           console.log('Candidatos de A recebidos em B', data);
           this.candidateA = data; // Processa a oferta recebida 
-          this.webRTCService.handleRemoteCandidate(data)
+          this.webRTCService.setCandidate(data)
       },
       (err: any)=>{
         console.log("erro ao receber a voiceCall");
@@ -69,8 +98,7 @@ callAccept: boolean = false
       (data: any)=>{
           console.log('Candidatos de B recebidos em A', data);
           this.candidateA = data; // Processa a oferta recebida
-          this.webRTCService.handleRemoteCandidate(data)
-          console.log(data)     
+          this.webRTCService.setCandidate(data)
       },
       (err: any)=>{
         console.log("erro ao receber a voiceCall");
@@ -84,7 +112,6 @@ callAccept: boolean = false
     this.api.getOffer().subscribe(
       (offer: any)=>{
         console.log('Chamada recebida', offer);
-        
         this.offer = {
           'type': '',
           'sdp': ''
@@ -103,7 +130,8 @@ callAccept: boolean = false
         localStorage.setItem('sendCall', this.offerRTC.call.sendUid)
         localStorage.setItem('getCall', this.offerRTC.call.getUid)
         localStorage.setItem('dateCall', this.offerRTC.call.date)
-
+        this.answerCancelCall()
+        console.log("sendCall Depois"+ localStorage.getItem("sendCall"))
         this.api.getByUser(`${localStorage.getItem('sendCall')}`).subscribe(
           (data: any)=>{
             this.userCall = data
@@ -111,17 +139,6 @@ callAccept: boolean = false
           }
         )
         this.callReceived = true
-
-        this.api.answerCancelCall().subscribe(
-          (data: CancelCall)=>{
-            console.log("chamada cancelada"+ data.uid)
-            this.callReceived = false
-          },
-          (err: any)=>{
-            console.log("erro ao receber cancelamento de chamada"+ err)
-          }
-        )
-
       },
       (err: any)=>{
         console.log("erro ao receber a voiceCall");
@@ -138,13 +155,12 @@ callAccept: boolean = false
 
   refuseAnswer(){
     
-    const answer: Offer = {
+    /*const answer: Offer = {
       'type': 'answer',
       'sdp': 'recusada'
-    }
+    }*/
 
-    this.callReceived = false
-    this.api.sendAnswer(answer)
+    //this.api.sendAnswer(answer)
     console.log("ligação recusada")
   }
 
@@ -160,7 +176,6 @@ callAccept: boolean = false
           if(answer.sdp.includes('recusada')){
             this.callAccept = false
           }
-          this.webRTCService.remoteCall(answer)
           console.log('ANSWER RECEBIDA NA HOME:', data);
       
       },
@@ -243,12 +258,31 @@ callAccept: boolean = false
   closeCall(){
     this.callAccept = false
     this.cancelCall.status = 'cancelado'
-    this.cancelCall.uid = `${localStorage.getItem('Auth')}`
+    this.cancelCall.uid = `${localStorage.getItem('sendCall')}`
+    localStorage.removeItem('getCall')
+    localStorage.removeItem('dateCall')
+    localStorage.removeItem("sendCall")
+   
     this.api.cancelCall(this.cancelCall)
     this.webRTCService.stopMediaStream()
   }
 
-  answerCancelCall(){
+  answerCancelCall(){    
+    this.api.answerCancelCall().subscribe(
+      (data: any)=>{
+        console.log("chamada cancelada"+ data.uid)
+        this.callReceived = false
+        this.callAccept = false
+        localStorage.removeItem('getCall')
+        localStorage.removeItem('dateCall')
+        localStorage.removeItem("sendCall")
+        this.webRTCService.stopMediaStream()
+      },
+      (err: any)=>{
+        console.log("erro ao receber cancelamento de chamada"+ err)
+      }
+    )
+
     
   }
 }

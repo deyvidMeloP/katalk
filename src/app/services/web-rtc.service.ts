@@ -10,19 +10,27 @@ type Offer = {type: String} & {sdp: String}
   providedIn: 'root'
 })
 export class WebRTCService {
-
+  streamLocal: any
   public peerConnection: RTCPeerConnection | null = null;
+  candidate: any[] = []
   // Configuração para o STUN server
 
-  constructor(private api: ApiService, private http: HttpClient) {}
+  constructor(private api: ApiService, private http: HttpClient) {
+  }
 
   private url =  "https://katalk-api.onrender.com";
   
+  setCandidate(value: any){
+    this.candidate.push(value)
+
+  }
+//troque a trava, não deve ser em answer, mas sim em adicionar os candidatos, faça enviar a offer, aceitar e sem pausa enviar a resposta e adicionar a resposta, mas ele deve esperar para adicionar a resposta, usa o cancel call pra cancelar a chamada
   startCall(mode: String) {
+
     const configuration = {
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     };
-  
+
       this.peerConnection = new RTCPeerConnection(configuration);
   
     this.peerConnection.oniceconnectionstatechange = () => {
@@ -32,16 +40,12 @@ export class WebRTCService {
     };
   
     this.api.getAnswerCall().subscribe(
-      (answer: Offer) => {
+      (answer: any) => {
         if (!answer.sdp.includes('recusada') && this.peerConnection) {
-          this.peerConnection.onicecandidate = (event) => {
-            if (event.candidate) {
-              console.log("Enviando candidato ICE...");
-              this.api.sendCandidate(event.candidate); // Envia o candidato ICE
-            } else {
-              console.log("Todos os candidatos ICE foram enviados.");
-            }
-          };
+          const remoteDescription = new RTCSessionDescription(answer);
+          console.log("remotedescription criado")
+          this.peerConnection.setRemoteDescription(remoteDescription);
+          this.candidate.forEach(el=> this.handleRemoteCandidate(el))
         } else if (this.peerConnection) {
           this.stopMediaStream();
         }
@@ -50,6 +54,17 @@ export class WebRTCService {
         console.log("Erro ao receber a offer", err);
       }
     );
+  
+    
+    this.peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("Enviando candidato ICE...A");
+        this.api.sendCandidate(event.candidate); // Envia o candidato ICE
+
+      } else {
+        console.log("Todos os candidatos ICE foram enviados.");
+      }
+    };
   
     // Ao receber o stream remoto
     this.peerConnection.ontrack = (event) => {
@@ -76,6 +91,7 @@ export class WebRTCService {
       navigator.mediaDevices.getUserMedia({ video: false, audio: true })
         .then((stream) => {
           console.log('Apenas microfone capturado:', stream);
+          this.streamLocal = stream;
           stream.getTracks().forEach((track) => {
             if (this.peerConnection) {
               this.peerConnection.addTrack(track, stream);
@@ -95,6 +111,7 @@ export class WebRTCService {
       navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then((stream) => {
           console.log('Câmera e microfone capturados:', stream);
+          this.streamLocal = stream;
           stream.getTracks().forEach((track) => {
             if (this.peerConnection) {
               this.peerConnection.addTrack(track, stream);
@@ -112,18 +129,25 @@ export class WebRTCService {
   
 
 stopMediaStream() {
+  if (this.streamLocal) {
+    this.streamLocal.getTracks().forEach((track: { stop: () => any; }) => track.stop());
+    this.streamLocal = null;
+  }
 
-  const localVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
-  if (localVideo) {
-    const stream = localVideo.srcObject as MediaStream;
+
+  const remoteVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
+  if (remoteVideo) {
+    const stream = remoteVideo.srcObject as MediaStream;
     stream.getTracks().forEach((track) => {
-      track.stop(); 
+      track.stop();
     });
-    localVideo.srcObject = null;
+    remoteVideo.srcObject = null;
   }
 
   if (this.peerConnection) {
     this.peerConnection.close();
+    console.log("ICE Connection State cancel:", this.peerConnection.iceConnectionState);
+    this.candidate = []
     this.peerConnection = null;  
   }
 
@@ -131,11 +155,10 @@ stopMediaStream() {
   if (audioElement) {
     audioElement.srcObject = null;
   }
-  const video = document.getElementById('remoteVideo') as HTMLAudioElement;
-  if (video) {
-    video.srcObject = null;
-  }
+
 }
+
+
 
   
   createOffer() {
@@ -149,6 +172,8 @@ stopMediaStream() {
           console.log("Descrição local definida.");
           // Enviar a oferta para o outro peer
           this.api.sendOffer(this.peerConnection!.localDescription);
+          console.log("sendCall"+ localStorage.getItem("sendCall"))
+
         })
         .catch((error) => {
           console.error('Erro ao criar oferta:', error);
@@ -206,6 +231,9 @@ stopMediaStream() {
       await this.peerConnection.setLocalDescription(answer);
       console.log("remote e local criados")
       this.api.sendAnswer(answer);
+      setTimeout(() => {
+        this.candidate.forEach(el => this.handleRemoteCandidate(el))
+      }, 10);
     } else {
       console.error("Oferta SDP inválida: ", offerSdp);
     }
@@ -236,6 +264,27 @@ remoteCall(answer: any){
 }
 
 handleRemoteCandidate(data: any) {
+  // Supondo que você receba o corpo do WebRTCMessage como string
+   if (this.peerConnection && data.candidate) {
+     const rtcCandidate = new RTCIceCandidate({
+       candidate: data.candidate.candidate,
+       sdpMid: data.candidate.sdpMid,
+       sdpMLineIndex: data.candidate.sdpMLineIndex
+     });
+     
+     this.peerConnection.addIceCandidate(rtcCandidate)
+       .then(() => {
+         console.log('Candidato ICE remoto adicionado com sucesso');
+       })
+       .catch((error) => {
+         console.error('Erro ao adicionar candidato ICE:', error);
+       });
+   } else {
+     console.log("Candidato ICE inválido ou conexão peer não estabelecida.");
+   }
+ }
+
+/*handleRemoteCandidate(data: any) {
  // Supondo que você receba o corpo do WebRTCMessage como string
   if (this.peerConnection && data.candidate) {
     const rtcCandidate = new RTCIceCandidate({
@@ -243,7 +292,7 @@ handleRemoteCandidate(data: any) {
       sdpMid: data.candidate.sdpMid,
       sdpMLineIndex: data.candidate.sdpMLineIndex
     });
-
+    
     this.peerConnection.addIceCandidate(rtcCandidate)
       .then(() => {
         console.log('Candidato ICE remoto adicionado com sucesso');
@@ -254,7 +303,7 @@ handleRemoteCandidate(data: any) {
   } else {
     console.log("Candidato ICE inválido ou conexão peer não estabelecida.");
   }
-}
+}*/
     // Conecte-se ao servidor de sinalização
     /*
     this.signalingSubject = webSocket('ws://localhost:8081');
