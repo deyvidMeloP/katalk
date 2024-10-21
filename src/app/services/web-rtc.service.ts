@@ -13,6 +13,7 @@ export class WebRTCService {
   streamLocal: any
   public peerConnection: RTCPeerConnection | null = null;
   candidate: any[] = []
+  stateRemote: boolean = false
   // Configuração para o STUN server
 
   constructor(private api: ApiService, private http: HttpClient) {
@@ -22,6 +23,14 @@ export class WebRTCService {
   
   setCandidate(value: any){
     this.candidate.push(value)
+
+    if(this.stateRemote){
+      
+      this.candidate.forEach(el=> this.handleRemoteCandidate(el))
+      this.candidate = []
+    }
+   
+
 
   }
 //troque a trava, não deve ser em answer, mas sim em adicionar os candidatos, faça enviar a offer, aceitar e sem pausa enviar a resposta e adicionar a resposta, mas ele deve esperar para adicionar a resposta, usa o cancel call pra cancelar a chamada
@@ -46,6 +55,8 @@ export class WebRTCService {
           console.log("remotedescription criado")
           this.peerConnection.setRemoteDescription(remoteDescription);
           this.candidate.forEach(el=> this.handleRemoteCandidate(el))
+          this.stateRemote = true
+        
         } else if (this.peerConnection) {
           this.stopMediaStream();
         }
@@ -136,24 +147,23 @@ stopMediaStream() {
     this.candidate = []
     this.peerConnection = null;  
   }
- 
-  if (this.streamLocal) {
-    this.streamLocal.getTracks().forEach((track: { stop: () => any; }) => track.stop());
-    this.streamLocal = null;
-  }
 
+  this.stateRemote = false
   const remoteVideo = document.getElementById('remoteVideo') as HTMLVideoElement;
   if (remoteVideo) {
     const stream = remoteVideo.srcObject as MediaStream;
     remoteVideo.srcObject = null;
   }
 
-
   const audioElement = document.getElementById('remoteAudio') as HTMLAudioElement;
   if (audioElement) {
     audioElement.srcObject = null;
   }
 
+  if (this.streamLocal) {
+    this.streamLocal.getTracks().forEach((track: { stop: () => any; }) => track.stop());
+    this.streamLocal = null;
+  }
 }
 
 

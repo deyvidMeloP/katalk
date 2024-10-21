@@ -131,6 +131,7 @@ callAccept: boolean = false
         localStorage.setItem('getCall', this.offerRTC.call.getUid)
         localStorage.setItem('dateCall', this.offerRTC.call.date)
         this.answerCancelCall()
+        console.log("sendCall Depois"+ localStorage.getItem("sendCall"))
         this.api.getByUser(`${localStorage.getItem('sendCall')}`).subscribe(
           (data: any)=>{
             this.userCall = data
@@ -269,7 +270,7 @@ callAccept: boolean = false
   answerCancelCall(){    
     this.api.answerCancelCall().subscribe(
       (data: any)=>{
-        console.log("chamada encerrada")
+        console.log("chamada cancelada"+ data.uid)
         this.webRTCService.stopMediaStream()
         this.callReceived = false
         this.callAccept = false
