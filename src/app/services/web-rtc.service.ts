@@ -225,11 +225,24 @@ stopMediaStream() {
         remoteAudio.srcObject = remoteStream;
       }
     };
-  
+
     // Processa a oferta recebida
     if (offerSdp.type === 'offer' && offerSdp.sdp) {
       const remoteDescription = new RTCSessionDescription(offerSdp);
-  
+      await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        console.log('Câmera e microfone capturados:', stream);
+        stream.getTracks().forEach((track) => {
+          if (this.peerConnection) {
+            console.log('track adicionada:', track);
+            this.peerConnection.addTrack(track, stream); // Adiciona a track de vídeo e áudio
+          }
+        });
+
+      })
+      .catch((error) => {
+        console.error('Erro ao capturar a câmera e microfone:', error);
+      });
       // Configura a descrição remota e cria a resposta
       await this.peerConnection.setRemoteDescription(remoteDescription);
       const answer = await this.peerConnection.createAnswer();
@@ -246,20 +259,7 @@ stopMediaStream() {
     }
   
     // Captura o stream local de vídeo e áudio
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        console.log('Câmera e microfone capturados:', stream);
-        stream.getTracks().forEach((track) => {
-          if (this.peerConnection) {
-            console.log('track adicionada:', track);
-            this.peerConnection.addTrack(track, stream); // Adiciona a track de vídeo e áudio
-          }
-        });
 
-      })
-      .catch((error) => {
-        console.error('Erro ao capturar a câmera e microfone:', error);
-      });
   }
   
 
