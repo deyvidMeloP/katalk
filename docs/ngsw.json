@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1729554108508,
+  "timestamp": 1729556475712,
   "index": "/katalk/index.html",
   "assetGroups": [
     {
@@ -13,7 +13,7 @@
       "urls": [
         "/katalk/favicon.ico",
         "/katalk/index.html",
-        "/katalk/main.f08d5551fa27e35e.js",
+        "/katalk/main.0b2e8bc1d5ec0738.js",
         "/katalk/manifest.webmanifest",
         "/katalk/polyfills.5b5196fede062d9e.js",
         "/katalk/runtime.59ddf5a0bf3b869f.js",
@@ -67,8 +67,8 @@
     "/katalk/assets/icon/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
     "/katalk/assets/icon/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
     "/katalk/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
-    "/katalk/index.html": "6f4eeea4187fccd89d2ea61461a24226ebc437c4",
-    "/katalk/main.f08d5551fa27e35e.js": "19f7db35a9c2a9c0109f6e380a774cf0021af544",
+    "/katalk/index.html": "17fba0b900dcc30c1634c98c5fc292df1d8ab7c9",
+    "/katalk/main.0b2e8bc1d5ec0738.js": "c18de32ec705ca704ef97dc07d1f5be35e69b0d8",
     "/katalk/manifest.webmanifest": "c9a3fc0f5bf3073abc571f53f72b3a9c364b3b0c",
     "/katalk/polyfills.5b5196fede062d9e.js": "b059c835770bbb288ce5566d272e12e688ec81cf",
     "/katalk/runtime.59ddf5a0bf3b869f.js": "61975d8156e6e948881f6f196925fe0ac2784821",

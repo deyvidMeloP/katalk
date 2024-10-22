@@ -55,6 +55,7 @@ export class WebRTCService {
           console.log("remotedescription criado")
           this.peerConnection.setRemoteDescription(remoteDescription);
           this.candidate.forEach(el=> this.handleRemoteCandidate(el))
+          this.candidate = []
           this.stateRemote = true
         
         } else if (this.peerConnection) {
@@ -79,7 +80,7 @@ export class WebRTCService {
   
     // Ao receber o stream remoto
     this.peerConnection.ontrack = (event) => {
-      console.log("on track chamdao")
+      console.log('Track recebidaontrack:', event.streams[0]);
       const remoteStream = new MediaStream();
       event.streams[0].getTracks().forEach((track) => {
         remoteStream.addTrack(track);
@@ -120,21 +121,19 @@ export class WebRTCService {
     // Caso o modo seja vídeo e áudio
     else if (mode.includes('video')) {
       navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then((stream) => {
-          console.log('Câmera e microfone capturados:', stream);
-          this.streamLocal = stream;
-          stream.getTracks().forEach((track) => {
-            if (this.peerConnection) {
-              this.peerConnection.addTrack(track, stream);
-            }
-          });
-  
-          console.log("Criando oferta...");
-          this.createOffer();
-        })
-        .catch((error) => {
-          console.error('Erro ao capturar câmera e microfone:', error);
+      .then((stream) => {
+        console.log('Stream local capturado:', stream);
+        stream.getTracks().forEach((track) => {
+          console.log('Adicionando track ao peerConnection:', track);
+          if(this.peerConnection)
+          this.peerConnection.addTrack(track, stream);
         });
+        this.createOffer();
+      })
+  .catch((error) => {
+    console.error('Erro ao capturar mídia:', error);
+  });
+
     }
   }
   
@@ -173,7 +172,7 @@ stopMediaStream() {
     if (this.peerConnection) {
       this.peerConnection.createOffer()
         .then((offer) => {
-          console.log("Oferta criada:", offer);
+          console.log("Oferta criada:", offer.sdp);
           return this.peerConnection!.setLocalDescription(offer);
         })
         .then(() => {
@@ -210,7 +209,7 @@ stopMediaStream() {
   
     // Adicionando os streams remotos ao vídeo remoto
     this.peerConnection.ontrack = (event) => {
-      console.log("ontrack chamado")
+      console.log('Track recebida:', event.streams[0]);
       const remoteStream = new MediaStream();
       event.streams[0].getTracks().forEach((track) => {
         remoteStream.addTrack(track);
@@ -252,6 +251,7 @@ stopMediaStream() {
         console.log('Câmera e microfone capturados:', stream);
         stream.getTracks().forEach((track) => {
           if (this.peerConnection) {
+            console.log('track adicionada:', track);
             this.peerConnection.addTrack(track, stream); // Adiciona a track de vídeo e áudio
           }
         });
