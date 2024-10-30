@@ -6,6 +6,7 @@ import { icon } from '@fortawesome/fontawesome-svg-core';
 import { user } from '@angular/fire/auth';
 import { FriendEntity } from '../../newFriend.model';
 import { group } from '@angular/animations';
+import { AuthService } from '../../services/auth.service';
 
 type GroupMessage = {username: string} & {lastMessage: string} & {uid: string} & {userSend: string} & {userGet: string} & {url: string} 
 
@@ -16,7 +17,7 @@ type GroupMessage = {username: string} & {lastMessage: string} & {uid: string} &
 })
 
 export class GroupMessageComponent implements OnInit {
-  constructor(private apiService: ApiService, private chat: ChangeChatService, private friendService: FriendListService ){
+  constructor(private apiService: ApiService, private chat: ChangeChatService, private friendService: FriendListService, private change: ChangeChatService, private authService: AuthService ){
   }
  //Recebe todas as mensagens desse usuário, enviadas e recebidas
   allMessage: any[] = []
@@ -46,6 +47,8 @@ export class GroupMessageComponent implements OnInit {
   word: string = 'olá meu nome'
   toggle: boolean = true
 
+  stateGroupButton: boolean = false
+
   ngOnInit(): void {
     this.getAllMessage();
     this.getGroupMessage();
@@ -72,6 +75,11 @@ export class GroupMessageComponent implements OnInit {
     
       this.friendValues = data
     
+    })
+
+    this.change.currentCloseMenu.subscribe((data: any)=>{
+      const friend = document.querySelector(".friendAll") as HTMLElement
+      friend.classList.remove('transition')
     })
 
    /* this.chat.currentFriendList.subscribe((data: any)=>{
@@ -265,12 +273,40 @@ export class GroupMessageComponent implements OnInit {
 
   chatMessage(group: any){
     
-    if(group.uid != localStorage.getItem('ChatOpen')){
+    const boxMain = document.querySelector(".box") as HTMLElement
+
+    const stringWidth = window.getComputedStyle(boxMain).width
+
+    const box = document.querySelector(".background") as HTMLElement
+    let [width, px]: any = stringWidth.split("px")
+    width = Number(width)
+    if(width <= 600){
       localStorage.setItem('ChatOpen', group.uid)
-      const box = document.querySelector(".background") as HTMLElement
       this.chat.changeChat(group);
-    }    
+      const groupMessageMobile = document.querySelector(".groupMessageMobile") as HTMLElement
+      
+      box.style.display = 'block'
+      groupMessageMobile.style.display = 'none'      
+      this.stateGroupButton = true
+
+    }
+
+    else if(group.uid != localStorage.getItem('ChatOpen')){
+
+      localStorage.setItem('ChatOpen', group.uid)
+      this.chat.changeChat(group);
+
+    }     
     
+  }
+
+  backGroup(){
+    const box = document.querySelector(".background") as HTMLElement
+    const groupMessageMobile = document.querySelector(".groupMessageMobile") as HTMLElement
+    box.style.display = 'none'
+    groupMessageMobile.style.display = 'flex'  
+    this.stateGroupButton = false
+
   }
 
 teste(){
@@ -536,6 +572,10 @@ closeFriendList(){
  if(teste >= 0){
   friendAll.style.right = "-280vw"
  }*/
+}
+
+logout(){
+  this.authService.logout()
 }
 
 }

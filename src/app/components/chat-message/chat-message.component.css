@@ -183,15 +183,32 @@
     color: #F3EBEB;
 }
 
-.send_Message textarea{
+.areaSend{
     background-color: #262626;
     border-radius: 14px;
     border: none;
     padding-left: 10px;
     color: #F3EBEB;
     resize: none;
+    width: 500px; 
+    height: 30px; 
+    overflow-y:auto; 
+    max-height: 76px;
 }
 
 .call{
     background: none;
+}
+
+@media screen and (max-width: 860px) {
+    
+    .areaSend{
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 600px){
+    .box_All_Message{
+        
+    }
 }

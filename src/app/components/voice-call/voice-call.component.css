@@ -54,8 +54,8 @@
 
 .videoCall{
   position: absolute;
-  width: 100vw;
-  height: 99.1vh;
+  width: 96vw;
+  height: 90vh;
   top: 0;
   left: 0;
   z-index: 99999;
@@ -82,4 +82,10 @@
   cursor: pointer;
   
 
+}
+
+@media screen and (max-width: 600px){
+  .videoCall{
+    width: 100vw;
+  }
 }

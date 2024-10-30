@@ -399,7 +399,7 @@ export class FriendAllComponent implements OnInit{
       }, 100);
       
       setTimeout(() => {
-        buttonsCategories.style.right = "-230px"
+        buttonsCategories.style.marginRight = "-244px"
       }, 300);
      
       button.innerText = "Fechar lista de amigos"
@@ -420,7 +420,7 @@ export class FriendAllComponent implements OnInit{
 
      }, 50);
      setTimeout(() => {
-      buttonsCategories.style.right = "-300px"
+      buttonsCategories.style.marginRight = "-330px"
     }, 100);
    
      button.innerText = "Ver lista de amigos"
@@ -463,4 +463,8 @@ export class FriendAllComponent implements OnInit{
     
   }
 
+  closeMenu(){
+
+    this.chat.changeCloseMenu(true)
+  }
 }

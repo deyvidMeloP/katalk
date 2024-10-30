@@ -37,6 +37,12 @@
 }
 
 
+@media screen and (max-width: 600px){
+  .box button{
+    display: none;
+  }
+}
+
 /*
 .box_all{
     display: flex;

@@ -11,7 +11,7 @@ export class RegisterComponent {
   password: string = ''
   userName: string = ''
   passwordConfirm: string = ''
-  clickRegister: number = 1
+  clickRegister: number = 0
   archiveImage: File | null = null;
   archiveImageStandart: string = "https://cdn-icons-png.flaticon.com/512/456/456212.png"
 
@@ -22,25 +22,34 @@ export class RegisterComponent {
 
   register(){
 
+    if(this.email == ''){
+      alert("please enter with your Email");
+      return;
+    }
+
     if(this.userName == ''){
       alert("Please enter with your Username")
       return
     }
 
-    
-    if(this.archiveImage == null){
-      //guarda this.archiveImageStandart
+    if(this.password == '' || this.passwordConfirm == ''){
+      alert("please enter with your Password")
+      return
     }
 
+
+    if(this.password != this.passwordConfirm){
+      alert("Password different")
+      return
+    }
+    
+
     //deve buscar todos os usuarios e verificar se existe algum com esse username, se sim, retorna, se não continua e registra
-   
-    /*
 
     this.auth.register(this.email, this.password, this.userName)
     this.email = ''
     this.password = ''
     this.userName = ''
-*/
 
   }
 

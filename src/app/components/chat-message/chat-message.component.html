@@ -51,7 +51,7 @@
     <form class="send_Message" (ngSubmit)="sendMessage()">
 
    <!---<input type="text" [(ngModel)]="message" name="textMessage"  (input)="adjustHeight($event)" style="width: 500px; word-wrap: break-word; max-width: 500px;" autocomplete="off">---> 
-        <textarea class="areaSend" [(ngModel)]="message" name="textMessage" rows="1" (keydown)="onKeyDown($event)" (input)="adjustHeight($event)" style="width: 500px; height: 30px; overflow-y:auto; max-height: 76px;"></textarea>
+        <textarea class="areaSend" [(ngModel)]="message" name="textMessage" rows="1" (keydown)="onKeyDown($event)" (input)="adjustHeight($event)"></textarea>
 
         <button type="submit"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3.09923 19.215L5.99938 12.805C6.20895 12.2888 6.20895 11.7112 5.99938 11.195L3.09923 4.78511C2.67923 3.71511 3.66926 2.62507 4.62926 3.12507L19.9293 10.1251C20.2559 10.3099 20.5274 10.578 20.7164 10.9022C20.9054 11.2263 21.005 11.5948 21.005 11.97C21.005 12.3453 20.9054 12.7138 20.7164 13.0379C20.5274 13.3621 20.2559 13.6302 19.9293 13.815L4.62926 20.815C3.66926 21.365 2.67923 20.285 3.09923 19.215Z" stroke="#44475C" stroke-width="2" stroke-linejoin="round"/>

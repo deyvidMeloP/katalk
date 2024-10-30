@@ -8,12 +8,13 @@ import { BehaviorSubject } from 'rxjs';
 export class ChangeChatService {
 
  private chatMessage = new BehaviorSubject<any>(null);
+ private closeMenu = new BehaviorSubject<any>(null)
 
  public height: any;
  public width: any;
 
  currentChatMessage = this.chatMessage.asObservable()
- 
+ currentCloseMenu = this.closeMenu.asObservable()
 
   constructor() { }
 
@@ -21,6 +22,10 @@ export class ChangeChatService {
     
     this.chatMessage.next(chat) 
 
+  }
+
+  changeCloseMenu(state: any){
+    this.closeMenu.next(state)
   }
 
 

@@ -201,10 +201,6 @@ export class HomeComponent implements OnInit {
 
   }
 
-  logout(){
-    this.authService.logout()
-  }
-
   userSearch(word: any): void{
 
     const text = this.textSearch.toLocaleLowerCase()

@@ -237,10 +237,18 @@
     }
 }
 
-@media (orientation: landscape) and (max-width: 1020px){
+@media (orientation: landscape) and (max-width: 400px){
     
     .box{
         width: 100%;
         height: 100%;
     }
+}
+
+@media screen and (max-width: 320px) {
+    
+    .loginWith h1::after, .loginWith h1::before{
+        display: none;
+    }
+
 }
