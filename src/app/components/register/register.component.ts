@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -15,7 +15,7 @@ export class RegisterComponent {
   archiveImage: File | null = null;
   archiveImageStandart: string = "https://cdn-icons-png.flaticon.com/512/456/456212.png"
 
-  constructor(private auth: AuthService){}
+  constructor(private auth: AuthService, private router: Router){}
   ngOnInit(): void {
     localStorage.clear();
   }
@@ -94,10 +94,11 @@ export class RegisterComponent {
 
     image.style.backgroundImage = "url(https://cdn-icons-png.flaticon.com/512/456/456212.png)"
     //guarda  this.archiveImageStandart
-    
+  
+  }
 
-    
-
+  navigateLogin(){
+   this.router.navigate(['login']) 
   }
 
 }
