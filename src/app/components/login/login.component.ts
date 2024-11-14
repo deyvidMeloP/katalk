@@ -32,7 +32,7 @@ export class LoginComponent {
 
    if(localStorage.getItem('Auth')){
       this.router.navigate(['home']).then(() => {
-        // Lógica adicional após a navegação, se necessário
+  
       });
     }
   
@@ -42,13 +42,12 @@ export class LoginComponent {
 
   }
 
+
+
   
-  sendMessage() {
-    //this.webSocketService.sendMessage(this.chatEntity);
+  navigateRegister(){
+    this.router.navigate(['register'])
   }
-
-  
-
 
   login(){
 
